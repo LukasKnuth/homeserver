@@ -1,0 +1,22 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: wireguard
+  namespace: flux-system
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: charts/wireguard
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 1m
+  targetNamespace: infrastructure
+  install:
+    createNamespace: true
+  values:
+    peers: android_phone,laptop
+    server_url: home-bg.dyn.lknuth.dev
+    peer_dns: "192.168.178.5"

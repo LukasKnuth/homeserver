@@ -1,0 +1,12 @@
+# Timezone
+timezone: Europe/Berlin
+
+# Comma separated list of peer names to generate configs for
+peers: example
+
+# The public URL to place inside peer configs.
+# E.g. The DynDNS name to connect via
+server_url:
+
+# The DNS address set inside peer configs.
+peer_dns:

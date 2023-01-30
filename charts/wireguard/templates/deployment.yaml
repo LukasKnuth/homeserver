@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wireguard.name" . }}
+  labels:
+    {{- include "wireguard.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "wireguard.selectorLabels" . | nindent 6 }}
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "wireguard.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - image: {{ .Chart.AppVersion }}
+          imagePullPolicy: Always
+          name: {{ include "wireguard.name" . }}
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN
+              - SYS_MODULE
+          ports:
+          - containerPort: 51820
+            hostPort: 51820
+            protocol: UDP
+          env:
+          - name: TZ
+            value: {{ .Values.timezone }}
+          - name: PEERS
+            value: {{ .Values.peers }}
+          - name: SERVERURL
+            value: {{ .Values.server_url }}
+          - name: PEERDNS
+            value: {{ .Values.peer_dns }}
+          volumeMounts:
+          - mountPath: /config
+            name: config
+          - mountPath: /lib/modules
+            name: kernel-modules
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "wireguard.config-storage" . }}
+        - name: kernel-modules
+          hostPath:
+            path: /lib/modules
