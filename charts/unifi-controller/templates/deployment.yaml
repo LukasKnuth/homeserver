@@ -40,12 +40,12 @@ spec:
             httpGet:
               path: /
               port: web-interface
-              scheme: https
+              scheme: HTTPS
           readinessProbe:
             httpGet:
               path: /
               port: web-interface
-              scheme: https
+              scheme: HTTPS
           volumeMounts:
             - name: config
               mountPath: /config
