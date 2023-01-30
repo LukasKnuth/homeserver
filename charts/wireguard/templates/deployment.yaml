@@ -24,7 +24,6 @@ spec:
             capabilities:
               add:
               - NET_ADMIN
-              - SYS_MODULE
           ports:
           - containerPort: 51820
             hostPort: 51820
