@@ -17,7 +17,7 @@ spec:
         {{- include "wireguard.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - image: {{ .Chart.AppVersion }}
+        - image: linuxserver/wireguard:{{ .Chart.AppVersion }}
           imagePullPolicy: Always
           name: {{ include "wireguard.name" . }}
           securityContext:
