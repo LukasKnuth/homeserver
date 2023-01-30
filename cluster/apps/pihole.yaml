@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: pihole
+  namespace: apps
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: charts/pihole
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 1m
+  values:
+    ingress:
+      host: pihole.rpi
+    webInterface:
+      # todo set via sealed secret!
+      password: testing
