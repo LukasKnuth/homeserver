@@ -36,9 +36,9 @@ spec:
             - name: TZ
               value: Europe/Berlin
             - name: VIRTUAL_HOST
-              value: {{ .Values.ingress.host }}
+              value: "{{ .Values.ingress.host }}"
             - name: PIHOLE_DNS_
-              value: {{ .Values.external_dns }}
+              value: "{{ .Values.external_dns }}"
           envFrom:
             - secretRef:
                 name: {{ include "pihole.secret" . }}
