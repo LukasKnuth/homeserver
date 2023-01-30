@@ -13,3 +13,8 @@ spec:
       port: {{ .Values.webInterface.servicePort }}
     middlewares:
     - name: https-redirect
+  - kind: Rule
+    match: PathPrefix(`/pihole`)
+    services:
+    - name: {{ include "pihole.web-interface" . }}
+      port: {{ .Values.webInterface.servicePort }}
