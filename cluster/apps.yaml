@@ -7,7 +7,7 @@ spec:
   interval: 5m # todo increase?
   timeout: 5m
   dependsOn:
-  - infrastructure
+  - name: infrastructure
   sourceRef:
     kind: GitRepository
     name: flux-system
