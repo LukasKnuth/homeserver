@@ -1,0 +1,18 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: unifi-controller
+  namespace: apps
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: charts/unifi-controller
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 1m
+  values:
+    ingress:
+      host: unifi-controller.rpi
