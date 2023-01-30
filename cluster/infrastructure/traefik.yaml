@@ -32,6 +32,9 @@ spec:
         namespace: traefik
       interval: 12h
   values:
+    ingressRoute:
+      dashboard:
+        entryPoints: ["web", "websecure"]
     # todo enable tlsInsecureVerify = false
     # todo enable HTTPS redirect
     # see old config
