@@ -14,6 +14,6 @@ spec:
         namespace: flux-system
       interval: 1m
   values:
-    peers: android_phone,laptop
+    peers: oneplus8t,macbookwork
     server_url: home-bg.dyn.lknuth.dev
     peer_dns: "192.168.178.5"
