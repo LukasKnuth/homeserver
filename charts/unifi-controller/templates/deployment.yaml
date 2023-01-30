@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "unifi-controller.name" . }}
+  labels:
+    {{- include "unifi-controller.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "unifi-controller.selectorLabels" . | nindent 6 }}
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "unifi-controller.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - image: ghcr.io/linuxserver/unifi-controller:{{ .Chart.AppVersion }}
+          imagePullPolicy: Always
+          name: {{ include "unifi-controller.name" . }}
+          ports:
+            - name: unifi-stun
+              containerPort: 3478
+              hostPort: 3478
+              protocol: UDP
+            - name: ap-discovery
+              containerPort: 10001
+              hostPort: 10001
+              protocol: UDP
+            - name: device-comms
+              containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+            - name: web-interface
+              containerPort: 8443
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: web-interface
+              scheme: https
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web-interface
+              scheme: https
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "unifi-controller.config-storage" . }}

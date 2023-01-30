@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "unifi-controller.web-interface" . }}
+  labels:
+    {{- include "unifi-controller.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "unifi-controller.selectorLabels" . | nindent 4 }}
+  type: NodePort
+  ports:
+    - name: web-interface
+      protocol: TCP
+      port: {{ .Values.webInterface.servicePort }}
+      targetPort: web-interface

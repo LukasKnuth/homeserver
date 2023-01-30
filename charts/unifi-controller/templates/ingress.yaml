@@ -1,0 +1,28 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "unifi-controller.web-interface" . }}-https-redirect
+  labels:
+    {{- include "unifi-controller.labels" . | nindent 4 }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "unifi-controller.web-interface" . }}
+  labels:
+    {{- include "unifi-controller.labels" . | nindent 4 }}
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`{{ .Values.ingress.host }}`)
+    services:
+    - name: {{ include "unifi-controller.web-interface" . }}
+      port: {{ .Values.webInterface.servicePort }}
+    middlewares:
+    - name: {{ include "unifi-controller.web-interface" . }}-https-redirect
