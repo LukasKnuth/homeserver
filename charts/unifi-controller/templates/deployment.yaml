@@ -36,16 +36,16 @@ spec:
             - name: web-interface
               containerPort: 8443
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: web-interface
-              scheme: HTTP
-          readinessProbe:
-            httpGet:
-              path: /
-              port: web-interface
-              scheme: HTTP
+          #livenessProbe:
+            #httpGet:
+              #path: /
+              #port: web-interface
+              #scheme: HTTP
+          #readinessProbe:
+            #httpGet:
+              #path: /
+              #port: web-interface
+              #scheme: HTTP
           volumeMounts:
             - name: config
               mountPath: /config
