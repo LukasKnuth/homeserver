@@ -1,3 +1,16 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "pihole.web-interface" . }}-https-redirect
+  labels:
+    {{- include "pihole.labels" . | nindent 4 }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+
+---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
@@ -11,5 +24,5 @@ spec:
     services:
     - name: {{ include "pihole.web-interface" . }}
       port: {{ .Values.webInterface.servicePort }}
-    #middlewares:
-    #- name: https-redirect
+    middlewares:
+    - name: {{ include "pihole.web-interface" . }}-https-redirect
