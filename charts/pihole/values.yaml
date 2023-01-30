@@ -1,0 +1,10 @@
+# Default values for pihole.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+webInterface:
+  servicePort: 80
+  password:
+
+ingress:
+  host: pihole.local

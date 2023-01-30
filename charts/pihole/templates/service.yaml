@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "pihole.web-interface" . }}
+  labels:
+    {{- include "pihole.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "pihole.selectorLabels" . | nindent 4 }}
+  type: NodePort
+  ports:
+    - name: web-interface
+      protocol: TCP
+      port: {{ .Values.webInterface.servicePort }}

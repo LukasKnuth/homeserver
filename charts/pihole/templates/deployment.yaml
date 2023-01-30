@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pihole.name" . }}
+  labels:
+    {{- include "pihole.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "pihole.selectorLabels" . | nindent 6 }}
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "pihole.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - image: {{ .Chart.AppVersion }}
+          imagePullPolicy: Always
+          name: pihole/pihole:{{ include "pihole.name" . }}
+          ports:
+            - name: dns-udp
+              containerPort: 53
+              hostPort: 53
+              protocol: UDP
+            - name: dns-tcp
+              containerPort: 53
+              hostPort: 53
+              protocol: TCP
+            - name: web-interface
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: TZ
+              value: Europe/Berlin
+            - name: VIRTUAL_HOST
+              value: {{ .Values.ingress.host }}
+          envFrom:
+            - secretRef:
+                name: {{ include "pihole.secret" . }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: web-interface
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web-interface
+          volumeMounts:
+            - name: pihole-config
+              mountPath: /etc/pihole
+              subPath: pihole
+            - name: pihole-config
+              mountPath: /etc/dnsmasq.d
+              subPath: dnsmasq
+      volumes:
+        - name: pihole-config
+          persistentVolumeClaim:
+            claimName: {{ include "pihole.config-storage" . }}

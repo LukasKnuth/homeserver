@@ -1,0 +1,12 @@
+apiVersion: v2
+name: pihole
+description: Run PiHole to block Ads in the network via DNS.
+
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+version: 0.1.0
+
+# This is the docker image being deployed.
+appVersion: "2023.01.10"

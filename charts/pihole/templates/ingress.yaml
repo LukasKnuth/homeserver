@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "pihole.web-interface" . }}
+  labels:
+    {{- include "pihole.labels" . | nindent 4 }}
+spec:
+  routes:
+  - kind: Rule
+    match: Host(`{{ .Values.ingress.host }}`)
+    services:
+    - name: {{ include "pihole.web-interface" . }}
+      port: {{ .Values.webInterface.servicePort }}
+    middlewares:
+    - name: https-redirect
