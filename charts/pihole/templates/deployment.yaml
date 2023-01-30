@@ -17,9 +17,9 @@ spec:
         {{- include "pihole.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - image: {{ .Chart.AppVersion }}
+        - image: pihole/pihole:{{ .Chart.AppVersion }}
           imagePullPolicy: Always
-          name: pihole/pihole:{{ include "pihole.name" . }}
+          name: {{ include "pihole.name" . }}
           ports:
             - name: dns-udp
               containerPort: 53
