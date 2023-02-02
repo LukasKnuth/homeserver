@@ -34,7 +34,7 @@ spec:
   values:
     logs:
       access:
-        enable: true
+        enabled: true
         #filters:
           #statusCodes:
           #- "400-599" # Errors only.
