@@ -42,14 +42,17 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "pihole.secret" . }}
-          livenessProbe:
-            httpGet:
-              path: /
-              port: web-interface
           readinessProbe:
             httpGet:
               path: /
               port: web-interface
+          livenessProbe:
+            exec:
+              command:
+              - sh
+              - "-c"
+              # Taken from PiHole Dockerfilce
+              - "dig +short +norecurse +retry=0 @127.0.0.1 pi.hole || exit 1"
           volumeMounts:
             - name: pihole-config
               mountPath: /etc/pihole
