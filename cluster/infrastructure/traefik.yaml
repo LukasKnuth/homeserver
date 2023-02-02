@@ -32,11 +32,6 @@ spec:
         namespace: traefik
       interval: 12h
   values:
-    additionalArguments:
-    # This is needed so that self-signed HTTPS from services
-    # is ignored and passed through (Unifi-Controller)
-    - "--serversTransport.insecureSkipVerify=true"
     ingressRoute:
       dashboard:
         entryPoints: ["web", "websecure"]
-    # todo enable HTTPS redirect

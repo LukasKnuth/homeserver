@@ -12,6 +12,17 @@ spec:
 
 ---
 apiVersion: traefik.containo.us/v1alpha1
+kind: ServersTransport
+metadata:
+  name: {{ include "unifi-controller.web-interface" . }}-transport
+spec:
+  # This is required because the container generates it's own HTTPS certificate
+  # and the service only serves HTTPS traffic. Since the cert is self-generated,
+  # it can't be verified reliably, so we just let it through.
+  insecureSkipVerify: true
+
+---
+apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: {{ include "unifi-controller.web-interface" . }}
@@ -24,5 +35,6 @@ spec:
     services:
     - name: {{ include "unifi-controller.web-interface" . }}
       port: {{ .Values.webInterface.servicePort }}
+      serversTransport: {{ include "unifi-controller.web-interface" . }}-transport
     middlewares:
     - name: {{ include "unifi-controller.web-interface" . }}-https-redirect
