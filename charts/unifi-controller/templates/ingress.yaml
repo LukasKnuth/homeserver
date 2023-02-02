@@ -32,6 +32,7 @@ metadata:
     {{- include "unifi-controller.labels" . | nindent 4 }}
 spec:
   entryPoints:
+  - web
   - websecure
   routes:
   - kind: Rule
@@ -41,5 +42,5 @@ spec:
       port: {{ .Values.webInterface.servicePort }}
       serversTransport: {{ include "unifi-controller.web-interface" . }}-transport
       scheme: https
-    #middlewares:
-    #- name: {{ include "unifi-controller.web-interface" . }}-https-redirect
+    middlewares:
+    - name: {{ include "unifi-controller.web-interface" . }}-https-redirect
