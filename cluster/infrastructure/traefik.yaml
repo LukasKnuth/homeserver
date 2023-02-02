@@ -39,6 +39,9 @@ spec:
           statuscodes: "400-599" # Errors only.
     ingressRoute:
       dashboard:
-        entryPoints: ["web", "websecure"]
+        entryPoints: ["websecure"]
+        # This is IMPORTANT. Other hosted services might do relative XHR/AJAX
+        # requests and the default rule is too broad and will match these.
+        # This results in weird 404 errors which can only be debugged with
+        # the access log
         matchRule: "Host(`traefik.rpi`)"
-        # todo middleware HTTPS
