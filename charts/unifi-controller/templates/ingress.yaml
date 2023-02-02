@@ -36,5 +36,6 @@ spec:
     - name: {{ include "unifi-controller.web-interface" . }}
       port: {{ .Values.webInterface.servicePort }}
       serversTransport: {{ include "unifi-controller.web-interface" . }}-transport
+      scheme: https
     middlewares:
     - name: {{ include "unifi-controller.web-interface" . }}-https-redirect
