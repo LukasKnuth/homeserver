@@ -15,6 +15,8 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: ServersTransport
 metadata:
   name: {{ include "unifi-controller.web-interface" . }}-transport
+  labels:
+    {{- include "unifi-controller.labels" . | nindent 4 }}
 spec:
   # This is required because the container generates it's own HTTPS certificate
   # and the service only serves HTTPS traffic. Since the cert is self-generated,
