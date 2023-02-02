@@ -36,8 +36,7 @@ spec:
       access:
         enabled: true
         filters:
-          statusCodes:
-          - "400-599" # Errors only.
+          statuscodes: "400-599" # Errors only.
     ingressRoute:
       dashboard:
         entryPoints: ["web", "websecure"]
