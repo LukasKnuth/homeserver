@@ -5,5 +5,8 @@
 webInterface:
   servicePort: 443
 
+pvc:
+  storageClass: local-path
+
 ingress:
   host: unifi-controller.local

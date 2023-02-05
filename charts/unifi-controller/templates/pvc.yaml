@@ -7,8 +7,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-path
+  storageClassName: {{ .Values.pvc.storageClass }}
   resources:
     requests:
-      storage: 2Gi # todo since "local-path" ignores this, what do we chose?
+      storage: 20Gi
   

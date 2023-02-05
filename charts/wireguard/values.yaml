@@ -1,3 +1,6 @@
+pvc:
+  storageClass: local-path
+
 # Timezone
 timezone: Europe/Berlin
 
