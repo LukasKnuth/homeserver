@@ -4,13 +4,14 @@ metadata:
   name: apps
   namespace: flux-system
 spec:
-  interval: 5m # todo increase?
-  timeout: 5m
   dependsOn:
   - name: infrastructure
   sourceRef:
     kind: GitRepository
     name: flux-system
   path: ./cluster/apps
-  prune: true # todo needed?
-  wait: true # todo needed?
+  interval: 60m0s # how often to detect drift and undo manual changes
+  prune: true # remove any stale resources
+  wait: true # wait for resources to become ready
+  timeout: 5m # give up "wait" after x
+  retryInterval: 1m # retry failures of apply/waiting
