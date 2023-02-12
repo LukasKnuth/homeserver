@@ -24,13 +24,13 @@ let
     if [ $? -ne 0 ]; then restic init; fi
   
   restic-backup:
-    restic backup . --no-cache --host {{env_var('HOST')}}
+    restic backup . --no-cache --host {{env_var('BACKUP_NAME')}}
   
   restic-retain:
-    restic forget --host {{env_var('HOST')}} --keep-last {{env_var('BACKUP_KEEP_MAX')}} --keep-daily {{env_var('BACKUP_KEEP_DAILY')}}
+    restic forget --host {{env_var('BACKUP_NAME')}} --keep-daily {{env_var('BACKUP_KEEP_DAILY')}} --keep-weekly {{env_var('BACKUP_KEEP_WEEKLY')}} --keep-monthly {{env_var('BACKUP_KEEP_MONTHLY')}}
   
   restic-prune:
-    # actually remove the data - LOCKS the repo, can't make new bakcups!
+    # actually remove the data - LOCKS the repo, can't make new backups!
     restic prune
     # verify integrity of reopsitory
     restic check
