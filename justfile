@@ -26,4 +26,10 @@ docker-run:
 fetch-kubeconfig ip user="pi":
   k3sup install --skip-install --ip {{ip}} --user {{user}}
 
+create-1password-secret cred-file namespace secret-name="onepassword-credentials" key-name="onepassword-credentials":
+  kubectl -n {{namespace}} create secret generic {{secret-name}} --from-file={{key-name}}={{cred-file}}
+
+create-1password-token token namespace secret-name="onepassword-token" key-name="token":
+  kubectl -n {{namespace}} create secret generic {{secret-name}} --from-literal=token={{token}}
+
 # todo Cluster setup
