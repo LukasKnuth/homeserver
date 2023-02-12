@@ -17,7 +17,7 @@ spec:
         {{- include "pihole.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - image: pihole/pihole:{{ .Chart.AppVersion }}
+        - image: {{ include "pihole.image" . }}
           imagePullPolicy: Always
           name: {{ include "pihole.name" . }}
           ports:

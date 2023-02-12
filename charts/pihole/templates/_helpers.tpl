@@ -13,6 +13,13 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
+Create chart image name, with version supplied by Chart.AppVersion
+*/}}
+{{- define "pihole.image" -}}
+{{- printf "pihole/pihole:%s" .Chart.AppVersion }}
+{{- end }}
+
+{{/*
 Create a name for the web-interface, used by service and ingress.
 */}}
 {{- define "pihole.web-interface" -}}
