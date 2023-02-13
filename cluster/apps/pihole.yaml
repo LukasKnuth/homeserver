@@ -20,6 +20,6 @@ spec:
     deployment:
       annotations:
         operator.1password.io/item-name: &secret-name "pihole-webinterface-password"
-        operator.1password.io/item-path: "vaults/saowjz663eddjhg4i3n5dy7l7m/items/pihole_web_interface"
+        operator.1password.io/item-path: "vaults/saowjz663eddjhg4i3n5dy7l7m/items/djsngxz53vehpuqrmugeopz5my"
     webInterface:
       passwordSecretName: *secret-name
