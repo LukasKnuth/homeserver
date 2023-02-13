@@ -25,4 +25,4 @@ spec:
         operator.1password.io/item-name: &secret-name "pihole-webinterface-password"
         operator.1password.io/item-path: "vaults/saowjz663eddjhg4i3n5dy7l7m/items/djsngxz53vehpuqrmugeopz5my"
     webInterface:
-      passwordSecretName: *secret-name
+      #passwordSecretName: *secret-name
