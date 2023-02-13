@@ -10,5 +10,5 @@ spec:
   storageClassName: {{ .Values.pvc.storageClass }}
   resources:
     requests:
-      storage: 20Gi
+      storage: {{ .Values.pvc.requestSize }}
   

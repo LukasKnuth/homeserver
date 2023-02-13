@@ -9,6 +9,7 @@ ingress:
 
 pvc:
   storageClass: local-path
+  requestSize: 4Gi
 
 deployment:
   annotations: {}

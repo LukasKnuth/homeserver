@@ -16,3 +16,6 @@ spec:
   values:
     ingress:
       host: unifi-controller.rpi
+    pvc:
+      # todo cant auto do this. resolve manually to default
+      requestSize: 2Gi
