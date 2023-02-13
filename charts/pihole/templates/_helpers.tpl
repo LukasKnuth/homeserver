@@ -38,15 +38,6 @@ Create a name for the persistent volume claim, used by pvc and pods.
 {{- end -}}
 
 {{/*
-Create a name for the secret, used by secret and pod.
-*/}}
-{{- define "pihole.secret" -}}
-{{- $suffix := default .Values.configSecretSuffix "secret" -}}
-{{- $appName := include "pihole.name" . -}}
-{{- printf "%s-%s" $appName $suffix | trunc 63 | trimSuffix "-" }}
-{{- end -}}
-
-{{/*
 Common labels
 */}}
 {{- define "pihole.labels" -}}

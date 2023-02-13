@@ -4,6 +4,8 @@ metadata:
   name: {{ include "pihole.name" . }}
   labels:
     {{- include "pihole.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.deployment.annotations | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -39,9 +41,11 @@ spec:
               value: "{{ .Values.ingress.host }}"
             - name: PIHOLE_DNS_
               value: "{{ .Values.external_dns }}"
+          {{- if .Values.webInterface.passwordSecretName }}
           envFrom:
             - secretRef:
-                name: {{ include "pihole.secret" . }}
+                name: {{ .Values.webInterface.passwordSecretName }}
+          {{- end }}
           readinessProbe:
             httpGet:
               path: /

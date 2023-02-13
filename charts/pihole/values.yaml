@@ -2,7 +2,7 @@
 
 webInterface:
   servicePort: 80
-  password:
+  passwordSecretName:
 
 ingress:
   host: pihole.local
@@ -10,4 +10,8 @@ ingress:
 pvc:
   storageClass: local-path
 
+deployment:
+  annotations: {}
+
 external_dns: "8.8.8.8;8.8.4.4"
+
