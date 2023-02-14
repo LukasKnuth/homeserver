@@ -42,5 +42,4 @@ spec:
       # todo cant auto do this. resolve manually to default
       requestSize: 2Gi
     webInterface:
-      servicePort: 80
       passwordSecretName: pihole-secrets
