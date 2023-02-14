@@ -19,3 +19,6 @@ spec:
     pvc:
       # todo cant auto do this. resolve manually to default
       requestSize: 2Gi
+    memory:
+      limit: 512
+      startup: 512
