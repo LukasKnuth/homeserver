@@ -14,8 +14,7 @@ spec:
   data:
   - secretKey: WEBPASSWORD
     remoteRef:
-      # "PiHole" item # todo verify this supports IDs here
-      key: djsngxz53vehpuqrmugeopz5my
+      key: "PiHole"
       # the default password property of a 1Password entry
       property: password
 
