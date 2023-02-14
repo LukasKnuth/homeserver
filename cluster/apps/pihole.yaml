@@ -34,8 +34,6 @@ spec:
         name: flux-system
         namespace: flux-system
       interval: 1m
-      valuesFiles:
-      - values.yaml
   values:
     external_dns: "5.1.66.255;185.150.99.255;2001:678:e68:f000::;2001:678:ed0:f000::"
     ingress:
@@ -44,4 +42,5 @@ spec:
       # todo cant auto do this. resolve manually to default
       requestSize: 2Gi
     webInterface:
+      servicePort: 80
       passwordSecretName: pihole-secrets
