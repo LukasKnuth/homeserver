@@ -1,23 +1,23 @@
-#---
-#apiVersion: external-secrets.io/v1beta1
-#kind: ExternalSecret
-#metadata:
-  #name: pihole-secrets
-#spec:
-  #secretStoreRef:
-    #kind: SecretStore
-    #name: onepassword
-    #namespace: onepassword
-  #refreshInterval: 1h
-  #target:
-    #creationPolicy: Owner
-  #data:
-  #- secretKey: WEBPASSWORD
-    #remoteRef:
-      ## "PiHole" item # todo verify this supports IDs here
-      #key: djsngxz53vehpuqrmugeopz5my
-      ## the default password property of a 1Password entry
-      #property: password
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: pihole-secrets
+spec:
+  secretStoreRef:
+    kind: SecretStore
+    name: onepassword
+    namespace: onepassword
+  refreshInterval: 1h
+  target:
+    creationPolicy: Owner
+  data:
+  - secretKey: WEBPASSWORD
+    remoteRef:
+      # "PiHole" item # todo verify this supports IDs here
+      key: djsngxz53vehpuqrmugeopz5my
+      # the default password property of a 1Password entry
+      property: password
 
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -44,4 +44,4 @@ spec:
       requestSize: 2Gi
     webInterface:
       servicePort: 80
-      #passwordSecretName: pihole-secrets
+      passwordSecretName: pihole-secrets
