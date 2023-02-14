@@ -10,6 +10,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./cluster/apps
+  targetNamespace: apps
   interval: 60m0s # how often to detect drift and undo manual changes
   prune: true # remove any stale resources
   wait: true # wait for resources to become ready
