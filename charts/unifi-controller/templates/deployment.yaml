@@ -41,16 +41,23 @@ spec:
             value: "{{ .Values.memory.startup }}"
           - name: MEM_LIMIT
             value: "{{ .Values.memory.limit }}"
+          startupProbe:
+            failureThreshold: 12 
+            periodSeconds: 10
+            httpGet:
+              path: /status
+              port: web-interface
+              scheme: HTTPS
           livenessProbe:
             httpGet:
               path: /status
               port: web-interface
-              scheme: HTTP
+              scheme: HTTPS
           readinessProbe:
             httpGet:
               path: /status
               port: web-interface
-              scheme: HTTP
+              scheme: HTTPS
           volumeMounts:
             - name: config
               mountPath: /config
