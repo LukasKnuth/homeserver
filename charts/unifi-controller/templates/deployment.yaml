@@ -45,12 +45,12 @@ spec:
             httpGet:
               path: /status
               port: web-interface
-              scheme: HTTPS
+              scheme: HTTP
           readinessProbe:
             httpGet:
               path: /status
               port: web-interface
-              scheme: HTTPS
+              scheme: HTTP
           volumeMounts:
             - name: config
               mountPath: /config
