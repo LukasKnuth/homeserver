@@ -36,6 +36,11 @@ spec:
             - name: web-interface
               containerPort: 8443
               protocol: TCP
+          env:
+          - name: MEM_STARTUP
+            value: "{{ .Values.memory.startup }}"
+          - name: MEM_LIMIT
+            value: "{{ .Values.memory.limit }}"
           #livenessProbe:
             #httpGet:
               #path: /

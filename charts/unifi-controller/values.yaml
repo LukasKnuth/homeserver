@@ -9,5 +9,9 @@ pvc:
   storageClass: local-path
   requestSize: 20Gi
 
+memory:
+  limit: 1024
+  startup: 1024
+
 ingress:
   host: unifi-controller.local
