@@ -41,16 +41,16 @@ spec:
             value: "{{ .Values.memory.startup }}"
           - name: MEM_LIMIT
             value: "{{ .Values.memory.limit }}"
-          #livenessProbe:
-            #httpGet:
-              #path: /
-              #port: web-interface
-              #scheme: HTTP
-          #readinessProbe:
-            #httpGet:
-              #path: /
-              #port: web-interface
-              #scheme: HTTP
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: web-interface
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: web-interface
+              scheme: HTTPS
           volumeMounts:
             - name: config
               mountPath: /config
