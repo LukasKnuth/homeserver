@@ -1,6 +1,4 @@
-# todo how to build this via CI?
 # build with `nix-build default.nix`
-# No need to specify nixpkgs, it's conditionally imported (can be overridden)
 # Mostly from https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/docker/examples.nix
 # https://github.com/moby/moby/blob/master/image/spec/v1.2.md#image-json-field-descriptions
 # https://nixos.org/manual/nixpkgs/stable/#sec-pkgs-dockerTools
@@ -16,7 +14,7 @@ let
   version:
     just --version
     restic version
-    curl --version
+    http --version
   
   restic-safe-init:
     #!/bin/bash
@@ -34,7 +32,6 @@ let
     restic prune
     # verify integrity of reopsitory
     restic check
-    # todo run this on a different schedule!
   
   backup: restic-safe-init restic-backup restic-retain
 
