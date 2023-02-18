@@ -20,8 +20,8 @@ docker-remove-image:
 docker-reimport-image: docker-remove-image docker-load-image
 docker-full: docker-build-image docker-reimport-image
 
-docker-run:
-  docker run -it --rm {{docker-image-tag}}
+docker-run arg="version":
+  docker run -it --rm {{docker-image-tag}} -- {{arg}}
 
 # Fetch K3s kubeconfig file from the server
 fetch-kubeconfig ip user="pi":
