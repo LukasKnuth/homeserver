@@ -48,5 +48,10 @@ in dockerTools.buildImage {
     WorkingDir = "/workdir";
     Entrypoint = [ "${pkgs.tini}/bin/tini" "--" "${pkgs.just}/bin/just" "-f" justfile ];
     Cmd = [ "-l" ];
+    Labels = {
+      "org.opencontainers.image.source" = "https://github.com/LukasKnuth/homeserver";
+      "org.opencontainers.image.description" = "Utility container mainly for creating backups of the cluster.";
+      "org.opencontainers.image.licenses" = "GPL-3.0";
+    };
   };
 }

@@ -6,7 +6,10 @@ nix-container:
   docker run -it --rm -v $(pwd)/utility:/workdir -w="/workdir" nixos/nix
 
 docker-image-file := "image.tar.gz"
-docker-image-tag := "backup-util"
+docker-image-name := "backup-util"
+docker-image-tag := "latest"
+docker-repo-user := "LukasKnuth"
+docker-repo-name := "ghcr.io" / lowercase(docker-repo-user) / docker-image-name
 
 docker-build-image:
   docker run --rm -v $(pwd)/utility:/workdir -w="/workdir" nixos/nix bash -c "rm {{docker-image-file}}; nix-build && cp -L result {{docker-image-file}} && rm result"
@@ -15,13 +18,21 @@ docker-load-image:
   docker load < utility/{{docker-image-file}}
 
 docker-remove-image:
-  docker rmi {{docker-image-tag}}
+  -docker rmi {{docker-image-name}}
+
+docker-retag-image tag:
+  docker tag {{docker-image-name}}:{{docker-image-tag}} {{docker-repo-name}}:{{tag}}
+
+docker-push-image tag:
+  docker login ghcr.io -u {{docker-repo-user}} -p {{env_var('GITHUB_TOKEN')}}
+  docker push {{docker-repo-name}}:{{tag}}
 
 docker-reimport-image: docker-remove-image docker-load-image
 docker-full: docker-build-image docker-reimport-image
+docker-publish tag: (docker-retag-image tag) (docker-push-image tag)
 
 docker-run arg="version":
-  docker run -it --rm {{docker-image-tag}} -- {{arg}}
+  docker run -it --rm {{docker-image-name}} -- {{arg}}
 
 # Fetch K3s kubeconfig file from the server
 fetch-kubeconfig ip user="pi":
