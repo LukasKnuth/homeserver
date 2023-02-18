@@ -11,6 +11,9 @@ let
     restic version
     http --version
   
+  shell:
+    -bash
+  
   restic-safe-init:
     #!/bin/bash
     restic snapshots
