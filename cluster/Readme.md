@@ -1,6 +1,6 @@
 # FluxCD cluster configuration
 
-This configuration is used by FluxCD to automate _most_ of the configuration in the cluster. Sadly, due to restrictions on certain apps, a few steps must be executed manually.
+This configuration is used by FluxCD to automate _most_ of the configuration in the cluster. Sadly, due to restrictions on certain apps, **a few steps must be executed manually**.
 
 ## DNS PiHole
 
@@ -13,7 +13,7 @@ To reach PiHole before these are setup, add the following to your `/etc/hosts` f
 <static-rpi-ip>   pihole.rpi
 ```
 
-Then, access the Admin Panel in the Browser via `http://pihole.rpi`, add the DNS records under "Local DNS > DNS Records" and finally remove the line from `/etc/hosts` again.
+Then, access the Admin Panel in the Browser via `https://pihole.rpi`, add the DNS records under "Local DNS > DNS Records" and finally remove the line from `/etc/hosts` again.
 
 ## Backups
 
