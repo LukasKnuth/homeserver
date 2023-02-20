@@ -1,10 +1,12 @@
 set shell := ["bash", "-uc"]
-# todo NixOS RaspberryPi Image
+
+# NixOS SD Image
+rpi-image-file := "nixos-rpi.img"
+
+rpi-image-build:
+  docker run --rm -v $(pwd)/host_system:/workdir -w="/workdir" nixos/nix bash -c "nix-build '<nixpkgs/nixos>' -I nixos-config=sdImage.nix -A config.system.build.sdImage && cp -L result {{rpi-image-file}} && rm result"
 
 # Nix Docker Containers
-nix-container:
-  docker run -it --rm -v $(pwd)/utility:/workdir -w="/workdir" nixos/nix
-
 docker-image-file := "image.tar.gz"
 docker-image-name := "backup-util"
 docker-image-tag := "latest"
@@ -33,6 +35,9 @@ docker-publish tag: (docker-retag-image tag) (docker-push-image tag)
 
 docker-run arg="version":
   docker run -it --rm {{docker-image-name}} -- {{arg}}
+
+nix-container:
+  docker run -it --rm -v $(pwd):/workdir -w="/workdir" nixos/nix
 
 # Fetch K3s kubeconfig file from the server
 fetch-kubeconfig ip user="pi":
