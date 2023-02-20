@@ -39,7 +39,7 @@ Next, create this minimal configuration under `/etc/nixos/configuration.nix`:
 ```nix
 { ... }:
 {
-  imports = [ /path/to/git/repo/host_system/configuration.nix ]
+  imports = [ /path/to/git/repo/host_system/configuration.nix ];
 }
 ```
 

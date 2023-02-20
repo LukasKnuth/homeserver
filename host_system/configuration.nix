@@ -14,7 +14,7 @@ let
 in {
   # Get RPi specific hardware support.
   imports = [
-    "${builtins.fetchGit { rpi_hardware_git }}/raspberry-pi/4"
+    "${(builtins.fetchGit rpi_hardware_git)}/raspberry-pi/4"
   ];
   
   # Mount Root filesystem
