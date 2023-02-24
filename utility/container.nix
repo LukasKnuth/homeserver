@@ -11,7 +11,7 @@ let
   version:
     just --version
     restic version
-    http --version
+    python3 --version
   
   shell:
     -bash
@@ -36,7 +36,34 @@ let
   backup: restic-safe-init restic-backup restic-retain
 
   healthcheck-io:
-    https --timeout 10 {{env_var('HEALTHCHECK_IO_URL')}}
+    #!/bin/python3
+    import os, requests
+    res = requests.post(os.environ['HEALTHCHECK_IO_URL'], timeout=10)
+    res.raise_for_status()
+  
+  unifi-backup:
+    #!/bin/python3
+    import os, requests
+    res = requests.post('https://unifi-controller.rpi/api/login', json={
+      'username': os.environ['UNIFI_USERNAME'], 'password': os.environ['UNIFI_PASSWORD']
+    }, verify=False)
+    res.raise_for_status()
+    print(res.url, res.status_code)
+    cookies = res.cookies
+    res = requests.post(
+      'https://unifi-controller.rpi/api/s/{0}/cmd/backup'.format(os.environ.get('UNIFI_SITE', 'default')),
+      json={'cmd': 'backup', 'days': 0}, cookies=cookies, verify=False
+    )
+    res.raise_for_status()
+    print(res.url, res.status_code)
+    download_url = res.json()['data'][0]['url']
+    res = requests.get('https://unifi-controller.rpi{0}'.format(download_url),
+      cookies=cookies, verify=False)
+    res.raise_for_status()
+    print(res.url, res.status_code)
+    with open('unifi-backup.unf', 'wb') as fd:
+      for chunk in res.iter_content(chunk_size=128):
+        fd.write(chunk)
   '';
 in dockerTools.buildImage {
   inherit tag;
@@ -46,7 +73,10 @@ in dockerTools.buildImage {
   copyToRoot = pkgs.buildEnv {
     name = "image-root";
     pathsToLink = [ "/bin" ];
-    paths = with pkgs; [ tini bash restic just httpie ];
+    paths = with pkgs; [
+      tini bash coreutils restic just
+      (python39.withPackages (p: [p.requests]))
+    ];
   };
   config = {
     WorkingDir = "/workdir";
