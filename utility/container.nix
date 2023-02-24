@@ -6,6 +6,8 @@ tag: { dockerTools, pkgs }:
 
 let
   justfile = pkgs.writeText "justfile" ''
+  set shell := ["bash", "-uc"]
+
   version:
     just --version
     restic version
@@ -39,6 +41,8 @@ let
 in dockerTools.buildImage {
   inherit tag;
   name = "backup-util";
+  # just will write scripts to /tmp, so it must exist.
+  extraCommands = "mkdir tmp";
   copyToRoot = pkgs.buildEnv {
     name = "image-root";
     pathsToLink = [ "/bin" ];
