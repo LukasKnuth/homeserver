@@ -18,8 +18,6 @@ spec:
             imagePullPolicy: IfNotPresent
             workingDir: /workdir
             env:
-            - name: HEALTHCHECK_IO_URL
-              value: "{{ .healthcheckIoUrl }}"
             - name: BACKUP_NAME
               value: unifi-controller
             - name: BACKUP_KEEP_DAILY
@@ -38,6 +36,8 @@ spec:
             args:
             - unifi-backup
             - backup
+            {{- if .sendHealthcheckIo }}
             - healthcheck-io
+            {{- end }}
   {{- end }}
 {{- end }}
