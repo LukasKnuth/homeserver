@@ -1,6 +1,4 @@
 # Default values for unifi-controller.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
 
 webInterface:
   servicePort: 443
@@ -15,3 +13,14 @@ memory:
 
 ingress:
   host: unifi-controller.local
+
+backup:
+  enabled: false
+  secrets: []
+  image: "ghcr.io/lukasknuth/backup-util:v3"
+  schedule: "0 4 * * *"
+  healthcheckIoUrl: 
+  rotation:
+    keepDaily: "3"
+    keepWeekly: "2"
+    keepMonthly: "6"

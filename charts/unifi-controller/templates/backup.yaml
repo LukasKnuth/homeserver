@@ -1,0 +1,43 @@
+{{- if .Values.backup.enabled }}
+apiVersion: v1
+kind: CronJob
+metadata:
+  name: {{ include "unifi-controller.name" . }}-backup
+  labels:
+    {{- include "unifi-controller.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.backup }}
+  schedule: "{{ .schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: "{{ .image }}"
+            imagePullPolicy: IfNotPresent
+            workingDir: /workdir
+            env:
+            - name: HEALTHCHECK_IO_URL
+              value: "{{ .healthcheckIoUrl }}"
+            - name: BACKUP_NAME
+              value: unifi-controller
+            - name: BACKUP_KEEP_DAILY
+              value: "{{ .rotation.keepDaily }}"
+            - name: BACKUP_KEEP_WEEKLY
+              value: "{{ .rotation.keepWeekly }}"
+            - name: BACKUP_KEEP_MONTHLY
+              value: "{{ .rotation.keepMonthly }}"
+            {{- if .secrets }}
+            envFrom:
+            {{- range .secrets }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
+            {{- end }}
+            args:
+            - unifi-backup
+            - backup
+            - healthcheck-io
+  {{- end }}
+{{- end }}
