@@ -1,0 +1,62 @@
+{{- if .Values.backup.enabled }}
+apiVersion: v1
+kind: CronJob
+metadata:
+  name: {{ include "pihole.name" . }}-backup
+  labels:
+    {{- include "pihole.labels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.backup.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          initContainers:
+          - name: download-config
+            image: {{ include "pihole.image" . }}
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+            - name: storage
+              mountPath: /workdir
+            workingDir: /workdir
+            command: "pihole"
+            # todo need to rename the output file?
+            # https://docs.pi-hole.net/core/pihole-command/#teleport
+            args:
+            - "-a"
+            - "-t" 
+          containers:
+          {{- with .Values.backup }}
+          - name: backup
+            image: "{{ .image }}"
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+            - name: storage
+              mountPath: /workdir
+            workingDir: /workdir
+            env:
+            - name: HEALTHCHECK_IO_URL
+              value: "{{ .healthcheckIoUrl }}"
+            - name: BACKUP_NAME
+              value: pihole
+            - name: BACKUP_KEEP_DAILY
+              value: "{{ .rotation.keepDaily }}"
+            - name: BACKUP_KEEP_WEEKLY
+              value: "{{ .rotation.keepWeekly }}"
+            - name: BACKUP_KEEP_MONTHLY
+              value: "{{ .rotation.keepMonthly }}"
+            {{- if .secrets }}
+            envFrom:
+            {{- range .secrets }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
+            {{- end }}
+            args:
+            - backup
+            - healthcheck-io
+          {{- end }}
+          volumes:
+          - name: storage
+            emptyDir: {}
+{{- end }}

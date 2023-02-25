@@ -2,7 +2,6 @@
 
 webInterface:
   servicePort: 80
-  passwordSecretName:
 
 ingress:
   host: pihole.local
@@ -16,3 +15,13 @@ deployment:
 
 external_dns: "8.8.8.8;8.8.4.4"
 
+backup:
+  enabled: false
+  secrets: []
+  image: "ghcr.io/lukasknuth/backup-util:v3"
+  schedule: "0 4 * * *"
+  healthcheckIoUrl: 
+  rotation:
+    keepDaily: "3"
+    keepWeekly: "2"
+    keepMonthly: "6"
