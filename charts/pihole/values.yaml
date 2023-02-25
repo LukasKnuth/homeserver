@@ -20,7 +20,8 @@ backup:
   secrets: []
   image: "ghcr.io/lukasknuth/backup-util:v3"
   schedule: "0 4 * * *"
-  healthcheckIoUrl: 
+  # NOTE: Supply URL via Environment 'HEALTHCHECK_IO_URL'
+  sendHealthcheckIo: false
   rotation:
     keepDaily: "3"
     keepWeekly: "2"

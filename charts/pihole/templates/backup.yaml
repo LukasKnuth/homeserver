@@ -35,8 +35,6 @@ spec:
               mountPath: /workdir
             workingDir: /workdir
             env:
-            - name: HEALTHCHECK_IO_URL
-              value: "{{ .healthcheckIoUrl }}"
             - name: BACKUP_NAME
               value: pihole
             - name: BACKUP_KEEP_DAILY
@@ -54,7 +52,9 @@ spec:
             {{- end }}
             args:
             - backup
+            {{- if .sendHealthcheckIo }}
             - healthcheck-io
+            {{- end }}
           {{- end }}
           volumes:
           - name: storage
