@@ -1,0 +1,49 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: restic-prune-secrets
+  namespace: apps
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  refreshInterval: 1h
+  target:
+    creationPolicy: Owner
+  data:
+  - secretKey: HEALTHCHECK_IO_URL
+    remoteRef:
+      key: "restic_backup_config"
+      property: healthcheck_io_url
+
+---
+apiVersion: v1
+kind: CronJob
+metadata:
+  name: restic-prune-registry
+spec:
+  schedule: "14 14 * * 4"
+  # Do NOT retry this, repo might be corrupted by this
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: prune-registry
+        image: "ghcr.io/lukasknuth/backup-util:v3"
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: storage
+          mountPath: /workdir
+        workingDir: /workdir
+        envFrom:
+        - secretRef: 
+            name: restic-backup-secrets
+        - secretRef:
+            name: restic-prune-secrets
+        args:
+        - restic-prune
+        - healthcheck-io
+      volumes:
+      - name: storage
+        emptyDir: {}

@@ -1,3 +1,31 @@
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: unifi-controller-backup-secrets
+  namespace: apps
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  refreshInterval: 1h
+  target:
+    creationPolicy: Owner
+  data:
+  - secretKey: UNIFI_USERNAME
+    remoteRef:
+      key: "Ubiquiti Unifi Controller"
+      property: username
+  - secretKey: UNIFI_PASSWORD
+    remoteRef:
+      key: "Ubiquiti Unifi Controller"
+      property: password
+  - secretKey: HEALTHCHECK_IO_URL
+    remoteRef:
+      key: "Ubiquiti Unifi Controller"
+      property: healthcheck_io_url
+
+---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -14,8 +42,20 @@ spec:
         namespace: flux-system
       interval: 1m
   values:
+    # todo should we define a resource-limit for memory to restsart if exceeded?
     ingress:
       host: unifi-controller.rpi
     pvc:
       # todo cant auto do this. resolve manually to default
       requestSize: 2Gi
+    backup:
+      enabled: true
+      schedule: "49 4 * * *"
+      secrets:
+      - restic-backup-secrets
+      - unifi-controller-backup-secrets
+      sendHealthcheckIo: true
+      rotation:
+        keepDaily: "3"
+        keepWeekly: "2"
+        keepMonthly: "6"
