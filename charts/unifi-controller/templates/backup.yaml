@@ -8,10 +8,12 @@ metadata:
 spec:
   {{- with .Values.backup }}
   schedule: "{{ .schedule }}"
+  backoffLimit: {{ .retryCount }}
   jobTemplate:
     spec:
       template:
         spec:
+          restartPolicy: Never
           containers:
           - name: backup
             image: "{{ .image }}"

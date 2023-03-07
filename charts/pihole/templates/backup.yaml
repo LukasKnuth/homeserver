@@ -7,10 +7,12 @@ metadata:
     {{- include "pihole.labels" . | nindent 4 }}
 spec:
   schedule: "{{ .Values.backup.schedule }}"
+  backoffLimit: {{ .Values.backup.retryCount }}
   jobTemplate:
     spec:
       template:
         spec:
+          restartPolicy: Never
           initContainers:
           - name: download-config
             image: {{ include "pihole.image" . }}
