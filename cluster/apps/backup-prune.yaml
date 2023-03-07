@@ -21,6 +21,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: restic-prune-registry
+  namespace: apps
 spec:
   schedule: "14 14 * * 4"
   # Do NOT retry this, repo might be corrupted by this
