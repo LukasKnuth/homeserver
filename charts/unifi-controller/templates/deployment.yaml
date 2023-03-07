@@ -20,6 +20,13 @@ spec:
         - image: ghcr.io/linuxserver/unifi-controller:{{ .Chart.AppVersion }}
           imagePullPolicy: IfNotPresent
           name: {{ include "unifi-controller.name" . }}
+          resources:
+            requests:
+              memory: "{{ .Values.memory.k8s.request }}"
+            {{- if .Values.memory.k8s.limit }}
+            limits:
+              memory: "{{ .Values.memory.k8s.limit }}"
+            {{- end }}
           ports:
             - name: unifi-stun
               containerPort: 3478
@@ -38,9 +45,9 @@ spec:
               protocol: TCP
           env:
           - name: MEM_STARTUP
-            value: "{{ .Values.memory.startup }}"
+            value: "{{ .Values.memory.jre.startup }}"
           - name: MEM_LIMIT
-            value: "{{ .Values.memory.limit }}"
+            value: "{{ .Values.memory.jre.limit }}"
           startupProbe:
             failureThreshold: 12 
             periodSeconds: 10

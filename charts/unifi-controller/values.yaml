@@ -8,8 +8,12 @@ pvc:
   requestSize: 20Gi
 
 memory:
-  limit: 1024
-  startup: 1024
+  jre:
+    startup: "default"
+    limit: "default"
+  k8s:
+    request: "1024Mi"
+    limit: null
 
 ingress:
   host: unifi-controller.local
