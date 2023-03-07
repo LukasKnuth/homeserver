@@ -1,5 +1,5 @@
 {{- if .Values.backup.enabled }}
-apiVersion: v1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "pihole.name" . }}-backup
