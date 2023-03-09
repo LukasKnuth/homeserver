@@ -29,7 +29,7 @@ let
   
   restic-prune:
     # actually remove the data - LOCKS the repo, can't make new backups!
-    restic prune
+    restic prune --verbose
     # verify integrity of reopsitory
     restic check
   
@@ -44,20 +44,21 @@ let
   unifi-backup:
     #!/bin/python3
     import os, requests
-    res = requests.post('https://unifi-controller.rpi/api/login', json={
+    base_url = os.environ['UNIFI_CONTROLLER_WEB_INTERFACE_SERVICE_HOST']
+    res = requests.post('https://{0}/api/login'.format(base_url), json={
       'username': os.environ['UNIFI_USERNAME'], 'password': os.environ['UNIFI_PASSWORD']
     }, verify=False)
     res.raise_for_status()
     print(res.url, res.status_code)
     cookies = res.cookies
     res = requests.post(
-      'https://unifi-controller.rpi/api/s/{0}/cmd/backup'.format(os.environ.get('UNIFI_SITE', 'default')),
+      'https://{0}/api/s/{1}/cmd/backup'.format(base_url, os.environ.get('UNIFI_SITE', 'default')),
       json={'cmd': 'backup', 'days': 0}, cookies=cookies, verify=False
     )
     res.raise_for_status()
     print(res.url, res.status_code)
     download_url = res.json()['data'][0]['url']
-    res = requests.get('https://unifi-controller.rpi{0}'.format(download_url),
+    res = requests.get('https://{0}{1}'.format(base_url, download_url),
       cookies=cookies, verify=False)
     res.raise_for_status()
     print(res.url, res.status_code)
