@@ -31,7 +31,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: prune-registry
-        image: "ghcr.io/lukasknuth/backup-util:v3"
+        image: "ghcr.io/lukasknuth/backup-util:v4"
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: storage
