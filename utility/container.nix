@@ -75,7 +75,7 @@ in dockerTools.buildImage {
     name = "image-root";
     pathsToLink = [ "/bin" ];
     paths = with pkgs; [
-      tini bash coreutils restic just
+      tini bash coreutils cacert restic just
       (python39.withPackages (p: [p.requests]))
     ];
   };
@@ -83,6 +83,7 @@ in dockerTools.buildImage {
     WorkingDir = "/workdir";
     Entrypoint = [ "${pkgs.tini}/bin/tini" "--" "${pkgs.just}/bin/just" "-f" justfile ];
     Cmd = [ "-l" ];
+    Env = [ "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" ];
     Labels = {
       "org.opencontainers.image.source" = "https://github.com/LukasKnuth/homeserver";
       "org.opencontainers.image.description" = "Utility container mainly for creating backups of the cluster.";
