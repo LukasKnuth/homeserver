@@ -81,7 +81,7 @@ in dockerTools.buildImage {
   };
   config = {
     WorkingDir = "/workdir";
-    Entrypoint = [ "${pkgs.tini}/bin/tini" "--" "${pkgs.just}/bin/just" "-f" justfile ];
+    Entrypoint = [ "${pkgs.tini}/bin/tini" "--" "${pkgs.just}/bin/just" "-f" justfile "-d" "/workdir" ];
     Cmd = [ "-l" ];
     Env = [ "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" ];
     Labels = {
