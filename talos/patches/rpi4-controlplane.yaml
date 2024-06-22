@@ -9,7 +9,9 @@
 - op: add
   path: /machine/network/interfaces
   value:
-    - interface: eth0
+    # This is "enx<HW_ADDR>" where HW_ADDR is the MAC address of the interface without colons
+    # This means that it's different for _every_ Raspberry Pi Hardware device!
+    - interface: enxe45f012b8369
       dhcp: false
       addresses: ["192.168.107.3/24"]
 
@@ -20,3 +22,8 @@
     node.kubernetes.io/instance-type: "rpi4.4gb.arm64"
     topology.kubernetes.io/region: cologne
     topology.kubernetes.io/zone: single
+
+# Allow workloads the be scheduled here (since it's a single-instance cluster)
+- op: replace
+  path: /cluster/allowSchedulingOnControlPlanes
+  value: true
