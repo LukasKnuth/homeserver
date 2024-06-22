@@ -18,3 +18,5 @@
   path: /machine/nodeLabels
   value:
     node.kubernetes.io/instance-type: "rpi4.4gb.arm64"
+    topology.kubernetes.io/region: cologne
+    topology.kubernetes.io/zone: single
