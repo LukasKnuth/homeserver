@@ -1,0 +1,7 @@
+# DNS Nameservers
+- op: replace
+  path: /machine/network/nameservers
+  value: 
+    - 192.168.107.1
+    - 9.9.9.9 # Quad9 DNS
+

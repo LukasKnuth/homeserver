@@ -1,1 +1,7 @@
 .envrc
+
+# Generated Talos config
+secrets.yaml
+talosconfig
+worker.yaml
+controlplane.yaml

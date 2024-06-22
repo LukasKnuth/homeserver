@@ -1,0 +1,9 @@
+# Virtual IP, should be the same on all nodes
+# The nodes will then elect who gets to hold the IP
+# See https://www.talos.dev/v1.7/talos-guides/network/vip/
+# This is simply where we'll send all traffic/DNS entries
+- op: add
+  path: /machine/network/interfaces/0
+  value:
+    vip:
+      ip: 192.168.178.3

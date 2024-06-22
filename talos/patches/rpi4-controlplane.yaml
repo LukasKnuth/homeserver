@@ -1,0 +1,20 @@
+# A JSON patch (in YAML) https://jsonpatch.com/
+
+# Hostname
+- op: replace
+  path: /machine/network/hostname
+  value: "talos-controlplane"
+
+# Static IP interface
+- op: add
+  path: /machine/network/interfaces
+  value:
+    - interface: eth0
+      dhcp: false
+      addresses: ["192.168.107.11/24"]
+
+# Machine labels
+- op: add
+  path: /machine/nodeLabels
+  value:
+    node.kubernetes.io/instance-type: "rpi4.4gb.arm64"
