@@ -5,3 +5,6 @@ secrets.yaml
 talosconfig
 worker.yaml
 controlplane.yaml
+
+# Kubernetes connection config
+kubeconfig

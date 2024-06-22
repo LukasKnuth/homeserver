@@ -36,4 +36,8 @@ To be able to talk to the new Talos node via `talosctl` tool, we'll need to upda
 
 ### 4th: Download Kubeconfig
 
-TODO
+After applying the configuration, ensure you can talk to the Talos node via `talosctl dmesg` - this should print some kernel logs.
+
+It _might_ be necessary to run `talosctl bootstrap` to initialized etcd, although in my case this was already done and the command told me so.
+
+To be able to talk to the node via `kubectl`, run `just kubeconfig` to download the configuration to the local `./kubeconfig` file. Again, we use a direnv entry `export TALOSCONFIG=$(expand_path ./talosconfig)` to make `kubectl` use the local file in this repository.

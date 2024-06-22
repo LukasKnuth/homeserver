@@ -63,5 +63,8 @@ apply-config ip:
   talosctl apply-config -n {{ip}} -f controlplane.yaml
 
 update-config ip:
-  talosctl --talosconfig talosconfig config endpoints "{{ip}}"
-  talosctl --talosconfig talosconfig config nodes "{{ip}}"
+  talosctl --talosconfig ./talosconfig config endpoints "{{ip}}"
+  talosctl --talosconfig ./talosconfig config nodes "{{ip}}"
+
+kubeconfig:
+  talosctl kubeconfig ./kubeconfig
