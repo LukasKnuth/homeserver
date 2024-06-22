@@ -58,3 +58,10 @@ gen-secrets:
 
 gen-config machine-patch cluster-name="home_cgn" cluster-endpoint="https://192.168.107.3:6443":
   talosctl gen config {{cluster-name}} {{cluster-endpoint}} --with-docs=false --with-examples=false --config-patch {{machine-patch}} --with-secrets secrets.yaml --config-patch @talos/patches/dns.yaml
+
+apply-config ip:
+  talosctl apply-config -n {{ip}} -f controlplane.yaml
+
+update-config ip:
+  talosctl --talosconfig talosconfig config endpoints "{{ip}}"
+  talosctl --talosconfig talosconfig config nodes "{{ip}}"
