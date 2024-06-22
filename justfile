@@ -57,4 +57,4 @@ gen-secrets:
   talosctl gen secrets
 
 gen-config machine-patch cluster-name="home_cgn" cluster-endpoint="https://192.168.107.3:6443":
-  talosctl gen config {{cluster-name}} {{cluster-endpoint}} --with-docs=false --with-examples=false --config-patch {{machine-patch}} --with-secrets secrets.yaml --config-patch @talos/patches/dns.yaml --config-patch @talos/patches/vip.yaml
+  talosctl gen config {{cluster-name}} {{cluster-endpoint}} --with-docs=false --with-examples=false --config-patch {{machine-patch}} --with-secrets secrets.yaml --config-patch @talos/patches/dns.yaml

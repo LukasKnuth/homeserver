@@ -11,7 +11,7 @@
   value:
     - interface: eth0
       dhcp: false
-      addresses: ["192.168.107.11/24"]
+      addresses: ["192.168.107.3/24"]
 
 # Machine labels
 - op: add
