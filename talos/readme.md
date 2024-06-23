@@ -30,14 +30,22 @@ We use the `talosconfig` file together with a direnv entry `export TALOSCONFIG=$
 
 To apply the generated configuration to a fresh device with the [Talos Raspberry PI Image](https://www.talos.dev/v1.7/talos-guides/install/single-board-computers/rpi_generic/#download-the-image) already flashed, simply run `just apply-config <ip>`
 
+> [!NOTE]
+> When applying config to a _freshly flashed_ node, we need the `insecure` flag, because no TLS secrets to secure the connection have been set up yet: `just apply-config <ip> insecure`
+>
+> When later applying config changes, the flag must be dropped, to verify the connection.
+
 Since this guide assumes you're building a single-instance cluster, it will apply the `controlplane.yaml`. The control-plane is set up to allow scheduling workloads to it, so that it will actually run containers.
 
 To be able to talk to the new Talos node via `talosctl` tool, we'll need to update our local `talosconfig` file to include a Node and Endpoint entry - this should point to the static IP given to the new control plane node: `just update-config <ip>`
 
 ### 4th: Download Kubeconfig
 
-After applying the configuration, ensure you can talk to the Talos node via `talosctl dmesg` - this should print some kernel logs.
+After applying the configuration, ensure everything is up and running using `talosctl health` - This should print OK for everything (might take some time while the node is fully booting).
 
-It _might_ be necessary to run `talosctl bootstrap` to initialized etcd, although in my case this was already done and the command told me so.
+> [!NOTE]
+> By default, the etcd waits to join an existing cluster. If there are no other nodes with a running etcd, it will wait forever.
+>
+> We need to tell _a single instance_ to [bootstrap etcd](https://www.talos.dev/v1.7/learn-more/control-plane/#bootstrapping-the-control-plane), which for our single-instance cluster will be our one control node. Run `just bootstrap <ip>` to do so.
 
 To be able to talk to the node via `kubectl`, run `just kubeconfig` to download the configuration to the local `./kubeconfig` file. Again, we use a direnv entry `export TALOSCONFIG=$(expand_path ./talosconfig)` to make `kubectl` use the local file in this repository.
