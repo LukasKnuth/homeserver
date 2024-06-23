@@ -19,6 +19,17 @@
     - interface: enxe45f012b8369
       dhcp: false
       addresses: ["192.168.107.3/24"]
+      routes:
+        - network: 0.0.0.0/0
+          gateway: 192.168.107.1
+
+# Pick the nodeIP from the static IP network.
+# NOTE: Not sure if this is required, added it following the troubleshooting guide when my node
+# still had the initial DHCP IP set on the Kubernetes Node ("couldn't find node" issue)
+- op: add
+  path: /machine/kubelet/nodeIP
+  value:
+    validSubnets: ["192.168.107.0/24"]
 
 # Machine labels
 - op: add
