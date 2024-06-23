@@ -1,5 +1,10 @@
 # A JSON patch (in YAML) https://jsonpatch.com/
 
+# Set install correctly to SD Card
+- op: replace
+  path: /machine/install/disk
+  value: /dev/mmcblk0
+
 # Hostname
 - op: replace
   path: /machine/network/hostname
