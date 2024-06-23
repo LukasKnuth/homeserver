@@ -8,3 +8,6 @@ controlplane.yaml
 
 # Kubernetes connection config
 kubeconfig
+
+# Terraform init stuff
+deploy/.terraform

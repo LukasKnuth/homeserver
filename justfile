@@ -73,3 +73,14 @@ bootstrap ip:
 
 kubeconfig:
   talosctl kubeconfig ./kubeconfig
+
+terraform-folder := "./deploy"
+
+deploy:
+  terraform -chdir={{terraform-folder}} apply
+
+init:
+  terraform -chdir={{terraform-folder}} init
+
+plan:
+  terraform -chdir={{terraform-folder}} plan
