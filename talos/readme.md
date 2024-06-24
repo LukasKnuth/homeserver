@@ -49,3 +49,10 @@ After applying the configuration, ensure everything is up and running using `tal
 > We need to tell _a single instance_ to [bootstrap etcd](https://www.talos.dev/v1.7/learn-more/control-plane/#bootstrapping-the-control-plane), which for our single-instance cluster will be our one control node. Run `just bootstrap <ip>` to do so.
 
 To be able to talk to the node via `kubectl`, run `just kubeconfig` to download the configuration to the local `./kubeconfig` file. Again, we use a direnv entry `export TALOSCONFIG=$(expand_path ./talosconfig)` to make `kubectl` use the local file in this repository.
+
+## References
+
+- [@dalmura's configuration](https://github.com/dalmura/infrastructure/blob/main/sites/indigo/docs/INDIGO-CORE-1-CONTROL-PLANE.md) with excellent documentation to get me started
+- [The RPi guide](https://www.talos.dev/v1.7/talos-guides/install/single-board-computers/rpi_generic/) which uses the interactive installer (caused some confusion)
+- [Pod Security](https://www.talos.dev/v1.7/kubernetes-guides/configuration/pod-security/) which caused problems when I tried to bind to port 80.
+- [Enabling Local Storage](https://www.talos.dev/v1.7/kubernetes-guides/configuration/local-storage/) for later?

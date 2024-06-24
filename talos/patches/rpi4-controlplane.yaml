@@ -40,6 +40,7 @@
     topology.kubernetes.io/zone: single
 
 # Allow workloads the be scheduled here (since it's a single-instance cluster)
+# https://www.talos.dev/v1.7/talos-guides/howto/workers-on-controlplane/
 - op: replace
   path: /cluster/allowSchedulingOnControlPlanes
   value: true
