@@ -3,6 +3,30 @@ locals {
     "app.kubernetes.io/name"       = var.name
     "app.kubernetes.io/managed-by" = "terraform"
   }
+  litestream_image       = "litestream/litestream:0.3"
+  litestream_config_path = "/etc/litestream.yml"
+  data_volume            = "application-state"
+  config_volume          = "litestream-config"
+}
+
+resource "kubernetes_config_map_v1" "litestream_config" {
+  metadata {
+    name      = "${var.name}-litestream-config"
+    namespace = var.namespace
+  }
+
+  data = {
+    # This DOES support multiple databases and multiple replicas per DB...
+    # https://litestream.io/reference/config/#database-settings
+    basename(local.litestream_config_path) = yamlencode({
+      dbs = [{
+        path = var.sqlite_path,
+        replicas = [{
+          url = var.s3_url
+        }]
+      }]
+    })
+  }
 }
 
 resource "kubernetes_deployment" "app" {
@@ -12,6 +36,7 @@ resource "kubernetes_deployment" "app" {
   }
 
   spec {
+    # NOTE: Litestream does NOT support more than one replica atm.
     replicas = 1
 
     selector {
@@ -24,6 +49,75 @@ resource "kubernetes_deployment" "app" {
       }
 
       spec {
+        volume {
+          name = local.config_volume
+          config_map {
+            name = kubernetes_config_map_v1.litestream_config.metadata.0.name
+          }
+        }
+
+        volume {
+          name = local.data_volume
+          # TODO Litestream says we _should_ use a PVC...
+          empty_dir {}
+        }
+
+        # Litestream Init Restore from Snapshot
+        init_container {
+          name  = "litestream-restore-snapshot"
+          image = local.litestream_image
+          args = [
+            "restore",
+            "-if-db-not-exists",
+            "-if-replica-exists",
+            #var.sqlite_path TODO test if this restores the DB!
+            # guide says it must have the path, but that seems silly for multiple DBs
+          ]
+
+          volume_mount {
+            name       = local.config_volume
+            mount_path = local.litestream_config_path
+            sub_path   = basename(local.litestream_config_path)
+          }
+
+          volume_mount {
+            name       = local.data_volume
+            mount_path = dirname(var.sqlite_path)
+          }
+
+          env_from {
+            secret_ref {
+              name = var.s3_secret_name
+            }
+          }
+        }
+
+        # Litestream Sidecar
+        container {
+          name  = "litestream-sidecar"
+          image = local.litestream_image
+          args  = ["replicate"]
+
+          volume_mount {
+            name       = local.config_volume
+            mount_path = local.litestream_config_path
+            sub_path   = basename(local.litestream_config_path)
+          }
+
+          volume_mount {
+            name       = local.data_volume
+            mount_path = dirname(var.sqlite_path)
+            read_only  = true # TODO does this work?
+          }
+
+          env_from {
+            secret_ref {
+              name = var.s3_secret_name
+            }
+          }
+        }
+
+        # Web App Container
         container {
           name  = var.name
           image = var.image
@@ -34,6 +128,11 @@ resource "kubernetes_deployment" "app" {
               name  = each.key
               value = each.value
             }
+          }
+
+          volume_mount {
+            name       = local.data_volume
+            mount_path = dirname(var.sqlite_path)
           }
 
           port {

@@ -23,9 +23,19 @@ variable "fqdn" {
   description = "The FQDN the application should be avilable under"
 }
 
-variable "sqlite_file_name" {
+variable "sqlite_path" {
   type        = string
-  description = "The name of the SQLite file which stores the application state."
+  description = "The full path to the SQLite file which stores the application state."
+}
+
+variable "s3_url" {
+  type        = string
+  description = "The S3 URL to replicate the SQLite Database to."
+}
+
+variable "s3_secret_name" {
+  type        = string
+  description = "Name of the Secret containing S3 credentials for replication. MUST be in the same Namespace as the App!"
 }
 
 # ------------ Overridable --------------
