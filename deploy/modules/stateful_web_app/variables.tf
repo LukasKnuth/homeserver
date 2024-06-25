@@ -3,6 +3,11 @@ variable "name" {
   description = "The name of the application."
 }
 
+variable "namespace" {
+  type        = string
+  description = "The namespace to deploy ALL application resources into."
+}
+
 variable "image" {
   type        = string
   description = "The image descriptor to fetch and run the App"
@@ -24,10 +29,10 @@ variable "sqlite_file_name" {
 }
 
 # ------------ Overridable --------------
-variable "namespace" {
-  type        = string
-  description = "The namespace to deploy ALL application resources into."
-  default     = "apps"
+variable "env" {
+  type        = map(string)
+  description = "Any ENVorinment variables"
+  default     = {}
 }
 
 variable "readiness_get_path" {

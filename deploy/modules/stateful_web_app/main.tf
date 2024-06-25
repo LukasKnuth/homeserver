@@ -25,9 +25,16 @@ resource "kubernetes_deployment" "app" {
 
       spec {
         container {
-          name  = var.name # generate a better name?
+          name  = var.name
           image = var.image
-          # TODO how to allow "args" overriding but use default if not specified?
+
+          dynamic "env" {
+            for_each = var.env
+            content {
+              name  = each.key
+              value = each.value
+            }
+          }
 
           port {
             container_port = var.expose_port
