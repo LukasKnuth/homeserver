@@ -1,5 +1,3 @@
-.envrc
-
 # Generated Talos config
 secrets.yaml
 talosconfig
