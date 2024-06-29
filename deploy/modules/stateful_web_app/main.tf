@@ -74,8 +74,7 @@ resource "kubernetes_deployment" "app" {
             "restore",
             "-if-db-not-exists",
             "-if-replica-exists",
-            #var.sqlite_path TODO test if this restores the DB!
-            # guide says it must have the path, but that seems silly for multiple DBs
+            var.sqlite_path
           ]
 
           volume_mount {
@@ -111,7 +110,6 @@ resource "kubernetes_deployment" "app" {
           volume_mount {
             name       = local.data_volume
             mount_path = dirname(var.sqlite_path)
-            read_only  = true # TODO does this work?
           }
 
           env_from {
