@@ -17,7 +17,7 @@ module "ingress" {
 module "dns" {
   source    = "./dns"
   namespace = kubernetes_namespace.infra.metadata.0.name
-  target_ip = "192.168.107.3"
+  target_ip = var.cluster_static_ip
 }
 
 # Refactoring

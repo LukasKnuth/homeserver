@@ -18,5 +18,5 @@ provider "kubernetes" {
 }
 
 provider "minio" {
-  minio_server = "192.168.107.4:9000"
+  # Entirely configured through ENV variables.
 }

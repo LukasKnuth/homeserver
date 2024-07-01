@@ -5,7 +5,7 @@ gen-secrets:
   talosctl gen secrets
 
 [group('talos')]
-gen-config machine-patch cluster-name="home_cgn" cluster-endpoint="https://192.168.107.3:6443":
+gen-config machine-patch cluster-name="home_cgn" cluster-endpoint="https://${CLUSTER_STATIC_IP}:6443":
   -talosctl gen config {{cluster-name}} {{cluster-endpoint}} --output-types talosconfig --with-secrets secrets.yaml
   talosctl gen config {{cluster-name}} {{cluster-endpoint}} --with-docs=false --with-examples=false --output-types controlplane --force --config-patch {{machine-patch}} --with-secrets secrets.yaml --config-patch @talos/patches/dns.yaml
   talosctl validate -c controlplane.yaml -m metal
