@@ -1,9 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - namespace.yaml
-  - backup-config.yaml
-#  - backup-prune.yaml # todo enable once backups are confirmed working
-  - pihole.yaml
-  - wireguard.yaml
-  - unifi-controller.yaml
