@@ -4,127 +4,110 @@ The FULL configuration of my small RPi (= Raspberry Pi 4B) based server at home.
 
 I'm using the 4GB version to run all of this on a single machine. Everything runs off of a SD Card, no additional hardware required.
 
-The reason this is public is to be a **learning resource**. Thats why it's licensed as GPL-3.0.
+The reason this is public is to be a **learning resource**. That's why it's licensed as GPL-3.0.
 
 ## Installation
 
 **Requirements**, this must be installed on your local system:
 
 * [just](https://github.com/casey/just) - To use the local `justfile` for commands
-* [Docker](https://www.docker.com/products/docker-desktop/) - to build Nix and NixOS RPi/Container images
-* [k3sup](https://github.com/alexellis/k3sup) - to get the `kubeconfig` file from a new installation
-* [kubectl](https://kubernetes.io/docs/tasks/tools/) - CLI, setup to interact with the Kubernetes cluster
-* [fluxcd](https://fluxcd.io/) - the CLI to setup the K3s cluster with FluxCD
+* [direnv](https://github.com/direnv/direnv) - To automatically export ENV variables
+* [talosctl](https://www.talos.dev/v1.7/talos-guides/install/talosctl/) - To set up the cluster nodes
+* [kubectl](https://kubernetes.io/docs/tasks/tools/) // [k9s](https://k9scli.io/) - To interact with the Kubernetes cluster
+* [terraform](https://www.terraform.io/) - To deploy workloads to the cluster
 
 All these tools are referenced in the `justfile` in the root folder of this repository. It contains all important commands (or receipts) needed to work with all aspects of this repository.
 
 Then, run these commands:
 
-1. TODO: build the RPi image
-2. TODO: Flash the RPi Image to SD card
-3. Insert SD card, boot the system, verify you can connect via SSH
-4. `just fetch-kubeconfig <ip>` to download the `kubeconfig` file for connecting via `Kubectl`
-  * Tip: Export the `KUBECONFIG` env variable and point it to the downloaded `kubeconfig` file. For example, using [direnv](https://direnv.net/)
-5. Verify you can connect via `kubectl cluster-info`
-6. `just create-1password-secret 1password-credentials.json`
-  * Requires [1Password Connect](https://start.1password.com/integrations/connect)
-7. `just create-1password-token <token>`
-8. TODO: use fluxcd command to init replication to cluster
-9. Wait for the cluster to reconcile. Done :tada:
+0. Flash the [Talos Metal RPi image](https://www.talos.dev/v1.7/talos-guides/install/single-board-computers/rpi_generic/) to an SD Card and insert it
+1. Review `.envrc` and adapt it to your situation
+2. **Once** generate Talos secrets `just gen-secrets`
+  * Save this file somewhere and keep it secret
+3. Create the Node configuration `just gen-config @talos/patches/rpi4-controlplane.yaml`
+4. Apply the Node configuration `just apply-config <ip> insecure`
+5. Update the local `talosctl` file `just update-config <ip>`
+6. Bootstrap etcd `just bootstrap <ip>`
+7. Download local `kubeconfig` with `just kubeconfig`
+8. Deploy workloads `just deploy`
 
 ## Repo Organization
 
 This repository is a mono-repo which contains _everything_ required to setup the home server. This includes:
 
-1. A NixOS configuration for the Linux Image flashed to the SD Card on RPi
-  * `host_system/` folder
-2. A Nix configuration for a Container Image to perform util tasks in the cluster around backups
-  * `utility/` folder
-3. All Helm Charts for applications run in the cluster via Kubernetes
-  * `charts/` folder
-4. The FluxCD cluster configuration for all apps, provisioners and configuration on the cluster
-  * `cluster/` folder
+1. The configuration patches to Talos Linux default config (version 1.7)
+  * `talos/` folder
+2. All workload deployments for Kubernetes via Terraform
+  * `deploy/` folder
 
 ## Technology and Reasoning
 
+> [!NOTE]
+> My opinions on technology choices have changed over time. I maintain a [history](#history) with reasons further down.
+
 ### Container Orchestrator
 
-I'm using Kubernetes on my personal server. Not full-blown Kubernetes but the much smaller (but still fully compliant) [K3s](https://k3s.io/) distribution.
+I'm using Kubernetes on my personal server. Do you need Kubernetes? No. Is it necessary for my setup? No. Why then? I have a bunch of (professional) experience with it, it lets me learn more about the system, I like it.
 
-Do you need Kubernetes? No. Is it necessary for my setup? No. Why then? I have a bunch of (professional) experience with it, it lets me learn more about the system, I like it.
+To make things simpler, I use [Talos Linux](https://talos.dev) as the host operating system, which is made to just run Kubernetes on bare metal. It has secure defaults and makes installation and configuration simple and declarative.
+
+Also, to make the cluster simpler, I restrict myself to the following:
+
+* NO custom resource definitions - They create ordering dependencies and for my needs, standard kubernetes ships with everything
+* NO Helm charts - Helm feels too complicated and not powerful enough at the same time. Most deployments can also be simplified for my specific needs and I like to know what I'm running. If needed, I manually translate external charts to HCL files
 
 ### Passwords/Secrets
 
-Passwords and Secrets are stored in 1Password and only referenced in configuration. The secrets are then fetched and turned into Kubernetes `Secret` resources by the [external-secrets](https://external-secrets.io/) operator.
+Where possible, the infra that requires authentication/authorization is set up via Terraform and the secrets are directly passed into the deployments that use them. This eliminates the need to store them somewhere.
 
-This additionally requires the [onepassword-connect](https://github.com/1Password/connect) controller running in the cluster to make the actual requests to the 1Password server.
-
-**Pros**
-+ I was already using 1Password as my password manager
-+ I was already paying for 1Password, so this is free to use
-
-**Cons**
-- The connect component isn't really active on GitHub
-- The connect component is closed-source, only documentation is available
-
-### Nix and NixOS
-
-I have just recently started looking into [Nix](https://nixos.org/) and the companion project NixOS. Both are efforts to make packages/a whole operating system declarative.
-
-This means mainly that you'll be writing a configuration file and building your system/environment from it. If you want things changed, you change the configuration and rebuild it.
-
-The system also allows a lot of flexibility in configuration, so I can create a fully set up system from a single config file. No more automating Raspberry OS configuration. The built system has SSH enabled, already has my SSH pub-key and all required packages installed and configured.
+> [!IMPORTANT]
+> The secrets are still in the Terraform state file, in plain text! Choose a backend that is secured from public access.
 
 **Pros**
-+ Very flexible and powerful way of creating very custom systems
-+ No need for automation with Ansible/Chef, everything is "already there"
-+ Many packages are supported, configuration is documented and validated
++ No need to have a secret store
++ No need to write them down and keep them up-to-date
 
 **Cons**
-- Requires a Nix environment to build, which seems to conflict on OS X. Solution: Building in Docker
-- The configuration language and the systems concepts have a steep learning curve, even if you're familiar with Linux
-- Manual adaption required, most RPi documentation is for Raspberry OS
+- Remember to keep your state file secure!
 
-### FluxCD
+### CI/CD
 
-We're using ArgoCD at work and I don't like it too much. Flux allows _everything_ to be configured in simple YAML files in a single repository, no configuration is done in any UIs and/or stored somewhere else.
+I find most CI/CD solutions out there too complex for the Job. Especially for something as small as a single node homeserver.
 
-To make up for no UI, I use [k9s](https://k9scli.io/), a Kubernetes client with easy navigation and auto refresh. During deployments, I use it to watch either `Kustomization` resources, or the `HelmRelease` resources. The events on these usually tell you whats wrong if a deployment fails.
+All I need is a way to apply all workloads to the cluster, make modifications/additions where needed and delete anything I have removed from my configuration. Terraform does just that. I simply run it from my dev machine.
 
 **Pros**
-+ Well documented, supported and a complete product
-+ Everything can be stored in a single place, easily reproduced from a repo
-+ No UIs, everything is custom resources
++ No more writing YAML
++ No more writing Go Template expressions
++ Does drift detection
++ Nothing to run _inside_ the cluster
 
 **Cons**
-- Helm Charts aren't updated if their version doesn't change. Not immediately obvious
-- I haven't been able to do any manual rollback for failing deployments. It's GitOps or die
-- Since there is no UI, you gotta know which resources are relevant to watch.
+- No live controller that enforces GitOps
 
-### Helm Charts
+### Ingress
 
-Kustomize with patches on normal YAML files is more lightweight, but again I have used Helm before and it's workflow comes more natural to me. At the simplest, it's just a template engine to create YAML files.
-
-My main takeaway here is that YAML is a weird language with many ambiguities, such as unquoted strings or structure via indention. Any system to create/manipulate these files will be complex just because of that. So you're really just choosing your poison, so pick what you like.
-
-**Pros**
-+ Widely used, good documentation, many resources available
-+ Supported by FluxCD out of the box
-+ Available for many other Kubernetes workloads, so we're not using multiple tools for the same thing
-+ Natural way to group everything belonging to an app together
-
-**Cons**
-- I find the Go templating notation kind of weird
-- Helm requires a Controller on the cluster which is a little more heavy-weight
-- Some of the Helm documentation doesn't apply when using FluxCD, since it controls your Helm Charts, not you
-
-### Traefik
-
-I like that this is focused and smaller than alternatives such as Nginx. It ships it's own CRDTs which make complex routing easily configurable via YAML files (e.g. as part of a Chart).
+I use [Traefik](https://doc.traefik.io/traefik/). It's focused and smaller than alternatives such as Nginx. It works with the standard `Ingress` resources and is easy to configure.
 
 **Pros**
 + It gets out of the way, just configure and forget
 + Focused on what I need: Edge Routing and Proxying
 
 **Cons**
-- They ship their own CRDTs, not using standard K8s resources
+- The documentation is sometimes either lacking or not well organized
+
+### Persistent Storage
+
+SQLite with Litestream replication.
+
+TODO
+
+## History
+
+### Changing from NixOS/k3s to Talos Linux
+
+asd
+
+### Changing from FluxCD to Terraform
+
+asd
