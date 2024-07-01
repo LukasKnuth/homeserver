@@ -5,21 +5,10 @@ locals {
   match_labels = { app = "traefik" }
 }
 
-resource "kubernetes_namespace" "infra" {
-  metadata {
-    name = "infra"
-    labels = {
-      # This is required here to allow Pods _inside_ the namespace to listen to
-      # low-number ports.
-      "pod-security.kubernetes.io/enforce" = "privileged"
-    }
-  }
-}
-
 resource "kubernetes_service_account" "traefik" {
   metadata {
     name      = "traefik"
-    namespace = kubernetes_namespace.infra.metadata.0.name
+    namespace = var.namespace
   }
 }
 
@@ -68,14 +57,14 @@ resource "kubernetes_cluster_role_binding" "traefik-rbac" {
   subject {
     kind      = "ServiceAccount"
     name      = kubernetes_service_account.traefik.metadata.0.name
-    namespace = kubernetes_namespace.infra.metadata.0.name
+    namespace = var.namespace
   }
 }
 
 resource "kubernetes_deployment" "traefik" {
   metadata {
     name      = "traefik"
-    namespace = kubernetes_namespace.infra.metadata.0.name
+    namespace = var.namespace
   }
 
   spec {
@@ -168,7 +157,7 @@ resource "kubernetes_ingress_class" "traefik" {
 resource "kubernetes_service" "traefik_dashboard" {
   metadata {
     name      = "traefik-dashboard"
-    namespace = kubernetes_namespace.infra.metadata.0.name
+    namespace = var.namespace
   }
 
   spec {
@@ -182,7 +171,7 @@ resource "kubernetes_service" "traefik_dashboard" {
 resource "kubernetes_ingress_v1" "traefik_dashboard" {
   metadata {
     name      = "traefik-dashboard"
-    namespace = kubernetes_namespace.infra.metadata.0.name
+    namespace = var.namespace
   }
 
   spec {
