@@ -14,6 +14,12 @@ module "ingress" {
   namespace = kubernetes_namespace.infra.metadata.0.name
 }
 
+module "dns" {
+  source    = "./dns"
+  namespace = kubernetes_namespace.infra.metadata.0.name
+  target_ip = "192.168.107.3"
+}
+
 # Refactoring
 moved {
   from = kubernetes_cluster_role.traefik-rbac
