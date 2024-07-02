@@ -12,14 +12,24 @@ resource "minio_iam_service_account" "litestream_credentials" {
 
 resource "minio_iam_policy" "access_policy" {
   name = "litestream-replicate"
+  # Taken from https://litestream.io/guides/s3/#restrictive-iam-policy
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      # TODO Litestream says "access denied", but why?
-      Effect   = "Allow",
-      Action   = ["s3:*"],
-      Resource = ["arn:aws:s3:::${minio_s3_bucket.litestream_destination.bucket}"]
-    }]
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["s3:GetBucketLocation", "s3:ListBucket"],
+        Resource = "arn:aws:s3:::${minio_s3_bucket.litestream_destination.bucket}"
+      },
+      {
+        Effect = "Allow",
+        Action = ["s3:PutObject", "s3:DeleteObject", "s3:GetObject"],
+        Resource = [
+          "arn:aws:s3:::${minio_s3_bucket.litestream_destination.bucket}/*",
+          "arn:aws:s3:::${minio_s3_bucket.litestream_destination.bucket}"
+        ]
+      }
+    ]
   })
 }
 
