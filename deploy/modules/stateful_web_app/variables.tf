@@ -63,3 +63,17 @@ variable "liveness_get_path" {
   default     = null
   description = "The URL to HTTP GET for the Liveness Probe"
 }
+
+variable "sqlite_file_uid" {
+  type        = number
+  nullable    = true
+  default     = null
+  description = "The UID of the user who should own the SQLite file"
+}
+
+variable "sqlite_file_gid" {
+  type        = number
+  nullable    = true
+  default     = null
+  description = "The GID of the user who should own the SQLite file"
+}

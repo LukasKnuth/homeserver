@@ -53,6 +53,15 @@ resource "kubernetes_deployment" "app" {
       }
 
       spec {
+        dynamic "security_context" {
+          # Use a consistent Group for all Containers to avoid root-containers fucking
+          # permissions for non-root containers.
+          for_each = var.sqlite_file_gid == null ? [] : [1]
+          content {
+            fs_group = var.sqlite_file_gid
+          }
+        }
+
         volume {
           name = local.config_volume
           config_map {
@@ -77,6 +86,11 @@ resource "kubernetes_deployment" "app" {
             var.sqlite_path
           ]
 
+          security_context {
+            run_as_user  = var.sqlite_file_uid
+            run_as_group = var.sqlite_file_gid
+          }
+
           volume_mount {
             name       = local.config_volume
             mount_path = local.litestream_config_path
@@ -100,6 +114,11 @@ resource "kubernetes_deployment" "app" {
           name  = "litestream-sidecar"
           image = local.litestream_image
           args  = ["replicate"]
+
+          security_context {
+            run_as_user  = var.sqlite_file_uid
+            run_as_group = var.sqlite_file_gid
+          }
 
           volume_mount {
             name       = local.config_volume
