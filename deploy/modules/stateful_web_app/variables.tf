@@ -28,9 +28,14 @@ variable "sqlite_path" {
   description = "The full path to the SQLite file which stores the application state."
 }
 
-variable "s3_url" {
+variable "s3_bucket" {
   type        = string
-  description = "The S3 URL to replicate the SQLite Database to."
+  description = "The S3 bucket to replicate the SQLite Database to."
+}
+
+variable "s3_endpoint" {
+  type        = string
+  description = "The S3 Endpoint to replicate the SQLite Database to"
 }
 
 variable "s3_secret_name" {

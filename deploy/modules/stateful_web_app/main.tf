@@ -23,9 +23,9 @@ resource "kubernetes_config_map_v1" "litestream_config" {
         path = var.sqlite_path,
         replicas = [{
           type        = "s3"
-          endpoint    = "http://192.168.107.4:9000"
+          endpoint    = var.s3_endpoint
           skip-verify = true
-          bucket      = var.s3_url
+          bucket      = var.s3_bucket
           path        = var.name
         }]
       }]
