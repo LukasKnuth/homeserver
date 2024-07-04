@@ -27,3 +27,22 @@ module "testapp" {
   s3_endpoint     = var.s3_endpoint
 }
 
+module "nocodb" {
+  source    = "./modules/stateful_web_app"
+  name      = "nocodb"
+  namespace = local.namespace
+  image     = "nocodb/nocodb:0.251.1"
+  env = {
+    "NC_DISABLE_ERR_REPORT" = "true"
+    "NC_DISABLE_TELE"       = "true"
+  }
+  expose_port        = 8080
+  liveness_get_path  = "/api/v1/health"
+  readiness_get_path = "/api/v1/health"
+  fqdn               = "nocodb.rpi"
+  sqlite_path        = "/usr/app/data/noco.db"
+  s3_secret_name     = kubernetes_secret_v1.litestream_config.metadata.0.name
+  s3_bucket          = minio_s3_bucket.litestream_destination.bucket
+  s3_endpoint        = var.s3_endpoint
+}
+
