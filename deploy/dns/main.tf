@@ -1,7 +1,8 @@
 locals {
   match_labels = {
-    app      = "external-coredns"
-    function = "dns"
+    "app.kubernetes.io/name"       = "external-coredns"
+    "app.kubernetes.io/managed-by" = "terraform"
+    "app.kubernetes.io/component"  = "dns"
   }
   config_mount = "config"
   config_path  = "/etc/coredns/Corefile"

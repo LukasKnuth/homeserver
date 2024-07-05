@@ -2,6 +2,7 @@ locals {
   match_labels = {
     "app.kubernetes.io/name"       = var.name
     "app.kubernetes.io/managed-by" = "terraform"
+    "app.kubernetes.io/component"  = "app"
   }
   litestream_image       = "litestream/litestream:0.3"
   litestream_config_path = "/etc/litestream.yml"

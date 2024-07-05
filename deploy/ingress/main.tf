@@ -2,7 +2,11 @@
 # Also: https://doc.traefik.io/traefik/getting-started/quick-start-with-kubernetes/
 
 locals {
-  match_labels = { app = "traefik" }
+  match_labels = {
+    "app.kubernetes.io/name"       = "traefik"
+    "app.kubernetes.io/managed-by" = "terraform"
+    "app.kubernetes.io/component"  = "ingress"
+  }
 }
 
 resource "kubernetes_service_account" "traefik" {
