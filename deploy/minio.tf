@@ -45,7 +45,7 @@ resource "minio_s3_bucket" "litestream_destination" {
 resource "kubernetes_secret_v1" "litestream_config" {
   metadata {
     name      = "litestream-configuration"
-    namespace = local.namespace
+    namespace = kubernetes_namespace.apps.metadata.0.name
   }
 
   data = {

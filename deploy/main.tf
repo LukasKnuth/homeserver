@@ -1,17 +1,13 @@
-locals {
-  namespace = "apps"
-}
-
 resource "kubernetes_namespace" "apps" {
   metadata {
-    name = local.namespace
+    name = "apps"
   }
 }
 
 module "testapp" {
   source      = "./modules/stateful_web_app"
   name        = "wallabag"
-  namespace   = local.namespace
+  namespace   = kubernetes_namespace.apps.metadata.0.name
   image       = "wallabag/wallabag:2.6.9"
   expose_port = 80
   env = {
@@ -30,7 +26,7 @@ module "testapp" {
 module "nocodb" {
   source    = "./modules/stateful_web_app"
   name      = "nocodb"
-  namespace = local.namespace
+  namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "nocodb/nocodb:0.251.1"
   env = {
     "NC_DISABLE_ERR_REPORT" = "true"
