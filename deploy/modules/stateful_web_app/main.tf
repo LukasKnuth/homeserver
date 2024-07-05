@@ -207,6 +207,10 @@ resource "kubernetes_ingress_v1" "web_ingress" {
   metadata {
     name      = var.name
     namespace = var.namespace
+    annotations = {
+      "gethomepage.dev/enabled" = true
+      "gethomepage.dev/group"   = "Apps"
+    }
   }
 
   spec {

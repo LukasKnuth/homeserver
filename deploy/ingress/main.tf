@@ -176,6 +176,12 @@ resource "kubernetes_ingress_v1" "traefik_dashboard" {
   metadata {
     name      = "traefik-dashboard"
     namespace = var.namespace
+    annotations = {
+      "gethomepage.dev/enabled"      = true
+      "gethomepage.dev/name"         = "Traefik Dashboard"
+      "gethomepage.dev/group"        = "Infra"
+      "gethomepage.dev/pod-selector" = "app.kubernetes.io/name=traefik"
+    }
   }
 
   spec {

@@ -4,6 +4,12 @@ resource "kubernetes_namespace" "apps" {
   }
 }
 
+module "dashboard" {
+  source         = "./dashboard"
+  namespace      = kubernetes_namespace.apps.metadata.0.name
+  apps_namespace = kubernetes_namespace.apps.metadata.0.name
+}
+
 module "testapp" {
   source      = "./modules/stateful_web_app"
   name        = "wallabag"
