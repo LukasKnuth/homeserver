@@ -98,16 +98,42 @@ I use [Traefik](https://doc.traefik.io/traefik/). It's focused and smaller than 
 
 ### Persistent Storage
 
-SQLite with Litestream replication.
+Instead of a "real" database, I restrict myself to SQLite. This means I don't have to run, configure and monitor a database on this server. The drawback is that I can't run applications that _require_ a real database. Fortunately, most database abstractions support SQLite, so most apps built on top of popular frameworks get SQLite support for free.
 
-TODO
+I don't run regular backup jobs. Instead, I use [Litestream](https://litestream.io/) for continuous replication of the SQLite databases to a NAS server on my network. _That_ server then backs up to the Cloud on a schedule. This gives both strong durability and fast backup and restore operations.
+
+Because restore operations are fast and backups continuous, I only use ephemeral storage on the server, meaning: When a Pod is deleted (for a restart or redeployment) it looses _all_ its local data. When the new Pod is then started, it first restores from the latest backup and then starts the application and continuous replication again.
+
+**Pros**
++ No need to test my backups: They're restored on every application restart
++ There is no data locality - if a workload is scheduled to a new Node, it will restore the data from the backup to its local ephemeral storage
++ No need to monitor Cronjobs, backups are continuous
+
+**Cons**
+- There is a theoretical chance that a high throughput application accumulates a large WAL which isn't fully replicated yet when it is shut down. Since the data is ephemeral, Litestream won't have a chance to "catch up" once it's restarted.
+  - I can live with this. Most applications I need are user-interaction driven, so their throughput is comparably low.
 
 ## History
 
 ### Changing from NixOS/k3s to Talos Linux
 
-asd
+In my previous server setup, I created a custom NixOS image to be flashed onto the SD Card. It came with [K3s](https://k3s.io) to run the Kubernetes workloads. It was configured with the absolute minimum to run on my Raspberry Pi.
 
-### Changing from FluxCD to Terraform
+This served me **very well** for two years. It really was "deploy and forget" - my server ran for 438 days uninterrupted until I had to shut it down to physically move it.
 
-asd
+Talos OS does many things that NixOS does as well (namely: declarative configuration of the entire system) but it is even more focused on simply running Kubernetes - and that makes it even simpler.
+
+Where NixOS would have allowed me far more flexibility, I never needed it. So I went with the even simpler option.
+
+### Changing from FluxCD/Helm to Terraform
+
+YAML for Kubernetes manifests is terrible. Go template language for generating YAML is also terrible. So I looked into other configuration languages that would be more expressive (and not whitespace sensitive) and then _compile_ to YAML.
+
+Helms management of CRDs did not easily allow me to update them. When restoring the cluster from manifests, there would be nasty dependencies on order of execution which weren't solved by Helm. Most Helm charts also added more _stuff_ to my cluster than I was comfortable with or able to understand.
+
+FluxCD enabled GitOps to deploy workloads and configuration to the cluster automatically on merge worked well, but since it's only a single person making changes, it was overblown. All I needed was a way to say "I want all of this in here".
+
+All of these technologies _insist_ on adding more _stuff_ to your cluster. Usually a handful of CRDs to configure it and an Operator Pod to make the actual changes in the cluster. Resources on my Raspberry Pi are scarce, I'd rather spent them on useful applications than live Cloud Native overhead.
+
+A non-whitespace config language. Dependency resolution. Drift detection. Terraform does all that. It solves all my gripes and is a lot simpler.
+
