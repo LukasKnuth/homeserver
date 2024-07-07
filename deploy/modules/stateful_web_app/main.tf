@@ -148,7 +148,7 @@ resource "kubernetes_deployment" "app" {
             for_each = var.env
             content {
               name  = env.key
-              value = env.value
+              value = tostring(env.value)
             }
           }
 
