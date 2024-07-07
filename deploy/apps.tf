@@ -48,3 +48,26 @@ module "nocodb" {
   s3_endpoint        = var.s3_endpoint
 }
 
+module "gotify" {
+  source    = "./modules/stateful_web_app"
+  name      = "gotify"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "ghcr.io/gotify/server-arm64:2.5.0"
+  env = {
+    "GOTIFY_REGISTRATION"               = true
+    "TZ"                                = "Europe/Berlin"
+    "GOTIFY_SERVER_SSL_ENABLED"         = false
+    "GOTIFY_SERVER_SSL_REDIRECTTOHTTPS" = false
+    "GOTIFY_DATABASE_DIALECT"           = "sqlite3"
+    "GOTIFY_DATABASE_CONNECTION"        = "data/gotify.db"
+  }
+  expose_port        = 80
+  readiness_get_path = "/health"
+  liveness_get_path  = "/health"
+  fqdn               = "gotify.rpi"
+  sqlite_path        = "/app/data/gotify.db"
+  s3_secret_name     = kubernetes_secret_v1.litestream_config.metadata.0.name
+  s3_bucket          = minio_s3_bucket.litestream_destination.bucket
+  s3_endpoint        = var.s3_endpoint
+}
+
