@@ -10,9 +10,9 @@ terraform {
       version = "2.3.2"
     }
 
-    http = {
-      source  = "hashicorp/http"
-      version = "3.4.3"
+    gotify = {
+      source  = "LukasKnuth/gotify"
+      version = "0.1.2"
     }
   }
 }
@@ -26,4 +26,9 @@ provider "minio" {
   # Entirely configured through ENV variables.
 }
 
-provider "http" {}
+provider "gotify" {
+  endpoint = "http://gotify.rpi"
+  # endpoint = "http://${var.cluster_static_ip}" # TODO also need to set "Host" HTTP Header
+  username = "admin"
+  password = "admin"
+}
