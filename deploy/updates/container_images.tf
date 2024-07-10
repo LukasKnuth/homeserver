@@ -16,7 +16,7 @@ resource "kubernetes_config_map_v1" "diun_config" {
       notif = {
         gotify = {
           endpoint = var.gotify_endpoint
-          token    = var.gotify_token
+          token    = var.gotify_application_token
           priority = 3
         }
       }

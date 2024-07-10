@@ -18,7 +18,8 @@ variable "gotify_endpoint" {
   description = "Gotify Service Endpoint to publish notifications under"
 }
 
-variable "gotify_token" {
+variable "gotify_application_token" {
   type        = string
+  sensitive   = true
   description = "Gotify Application Token to publich notifications with"
 }
