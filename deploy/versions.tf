@@ -9,6 +9,11 @@ terraform {
       source  = "aminueza/minio"
       version = "2.3.2"
     }
+
+    http = {
+      source  = "hashicorp/http"
+      version = "3.4.3"
+    }
   }
 }
 
@@ -20,3 +25,5 @@ provider "kubernetes" {
 provider "minio" {
   # Entirely configured through ENV variables.
 }
+
+provider "http" {}
