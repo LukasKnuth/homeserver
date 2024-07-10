@@ -34,10 +34,11 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
     "widgets.yaml" = yamlencode([
       {
         search = {
-          provider              = "custom"
-          target                = "_self"
-          url                   = "https://paulgo.io/search?q="
-          suggestionUrl         = "https://paulgo.io/autocompleter?q="
+          provider = "custom"
+          target   = "_self"
+          # https://help.kagi.com/kagi/getting-started/setting-default.html#manual_configuration - verify autosuggest works without token in link...
+          url                   = "https://kagi.com/search?q="
+          suggestionUrl         = "https://kagi.com/api/autosuggest?q="
           showSearchSuggestions = true
         }
       },
