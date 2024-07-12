@@ -36,7 +36,7 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
         search = {
           provider = "custom"
           target   = "_self"
-          # https://help.kagi.com/kagi/getting-started/setting-default.html#manual_configuration - verify autosuggest works without token in link...
+          # https://help.kagi.com/kagi/getting-started/setting-default.html#manual_configuration
           url                   = "https://kagi.com/search?q="
           suggestionUrl         = "https://kagi.com/api/autosuggest?q="
           showSearchSuggestions = true
