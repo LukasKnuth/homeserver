@@ -50,6 +50,13 @@ variable "env" {
   default     = {}
 }
 
+variable "dashboard_attributes" {
+  # See https://gethomepage.dev/latest/configs/kubernetes/#automatic-service-discovery
+  type        = map(string)
+  description = "Metadata attributes to set on the app to customize their dashboard appearance"
+  default     = {}
+}
+
 variable "readiness_get_path" {
   type        = string
   nullable    = true

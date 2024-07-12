@@ -207,10 +207,10 @@ resource "kubernetes_ingress_v1" "web_ingress" {
   metadata {
     name      = var.name
     namespace = var.namespace
-    annotations = {
+    annotations = merge({
       "gethomepage.dev/enabled" = true
       "gethomepage.dev/group"   = "Apps"
-    }
+    }, var.dashboard_attributes)
   }
 
   spec {

@@ -48,6 +48,10 @@ module "nocodb" {
   s3_endpoint        = var.s3_endpoint
 }
 
+resource "gotify_client" "dashboard" {
+  name = "Dashboard Widget"
+}
+
 module "gotify" {
   source    = "./modules/stateful_web_app"
   name      = "gotify"
@@ -60,6 +64,13 @@ module "gotify" {
     "GOTIFY_SERVER_SSL_REDIRECTTOHTTPS" = false
     "GOTIFY_DATABASE_DIALECT"           = "sqlite3"
     "GOTIFY_DATABASE_CONNECTION"        = "data/gotify.db"
+  }
+  dashboard_attributes = {
+    "gethomepage.dev/group"       = "Monitoring"
+    "gethomepage.dev/widget.type" = "gotify"
+    # TODO change this if either name, namespace or expose_port change!
+    "gethomepage.dev/widget.url" = "http://gotify.apps.svc.cluster.local"
+    "gethomepage.dev/widget.key" = gotify_client.dashboard.token
   }
   expose_port        = 80
   readiness_get_path = "/health"
