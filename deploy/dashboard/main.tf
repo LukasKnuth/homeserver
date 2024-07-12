@@ -9,9 +9,14 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       title = "Launchpad"
       theme = "light"
       color = "white"
-      layout = {
-
-      }
+      layout = [
+        { Apps = { columns = 4 } },
+        { Monitoring = { columns = 1 } },
+        { Infra = { columns = 1 } },
+        { Work = { style = "row", columns = 3 } },
+        { Tools = { style = "row", columns = 3 } },
+        { Procrastinate = { style = "row", columns = 3 } },
+      ]
       headerStyle = "boxed"
       language    = "en"
       target      = "_self"
@@ -23,12 +28,28 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       statusStyle = "dot"
     })
     "bookmarks.yaml" = yamlencode([
-      { Developer = [
-        { Github = [{ abbr = "GH", href = "https://github.com" }] },
-        { DataDog = [{ abbr = "GH", href = "https://app.datadoghq.com" }] }
+      { Work = [
+        { Backend = [{ abbr = "BA", href = "https://github.com/sevenmind/backend" }] },
+        { Kubernetes = [{ abbr = "KU", href = "https://github.com/sevenmind/7mind-kubernetes" }] },
+        { APIv1 = [{ abbr = "A1", href = "https://github.com/sevenmind/7mind-api-v1" }] },
+        { "API Contracts" = [{ abbr = "AC", href = "https://github.com/sevenmind/api-contracts" }] },
+        { Infrastructure = [{ abbr = "IF", href = "https://github.com/sevenmind/infrastructure" }] },
+        { PubSub = [{ abbr = "PS", href = "https://console.cloud.google.com/cloudpubsub?project=mind-f62c0" }] },
+        { "Cloud SQL" = [{ abbr = "PS", href = "https://console.cloud.google.com/sql/instances?project=mind-f62c0" }] },
+        { Cluster = [{ abbr = "K8", href = "https://console.cloud.google.com/kubernetes/clusters/details/europe-west3/eu/details?project=mind-f62c0" }] },
+        { Log = [{ abbr = "DD", href = "https://app.datadoghq.eu/logs" }] },
+        { Synthetics = [{ abbr = "SY", href = "https://app.datadoghq.eu/synthetics/tests" }] },
+        { Traces = [{ abbr = "TR", href = "https://app.datadoghq.eu/apm/traces" }] },
       ] },
-      { News = [
-        { HackerNews = [{ abbr = "HN", href = "https://news.ycombinator.com" }] }
+      { Tools = [
+        { Excalidraw = [{ abbr = "EX", href = "https://excalidraw.com" }] },
+        { Regex101 = [{ abbr = "RG", href = "https://regex101.com" }] },
+        { "Sequence Diagrams" = [{ abbr = "SQ", href = "https://www.websequencediagrams.com/app" }] },
+        { "D2 Diagrm Lang Playground" = [{ abbr = "D2", href = "https://play.d2lang.com" }] },
+      ] },
+      { Procrastinate = [
+        { HackerNews = [{ abbr = "HN", href = "https://news.ycombinator.com" }] },
+        { Nebula = [{ abbr = "NB", href = "https://nebula.tv" }] },
       ] }
     ])
     "widgets.yaml" = yamlencode([

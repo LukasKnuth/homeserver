@@ -66,8 +66,9 @@ module "gotify" {
     "GOTIFY_DATABASE_CONNECTION"        = "data/gotify.db"
   }
   dashboard_attributes = {
-    "gethomepage.dev/group"       = "Monitoring"
-    "gethomepage.dev/widget.type" = "gotify"
+    "gethomepage.dev/group"         = "Monitoring"
+    "gethomepage.dev/widget.type"   = "gotify"
+    "gethomepage.dev/widget.fields" = "[\"messages\"]"
     # TODO change this if either name, namespace or expose_port change!
     "gethomepage.dev/widget.url" = "http://gotify.apps.svc.cluster.local"
     "gethomepage.dev/widget.key" = gotify_client.dashboard.token
