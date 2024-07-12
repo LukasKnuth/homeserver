@@ -40,3 +40,7 @@ init:
 [group('ci-cd')]
 plan:
   terraform -chdir={{terraform-folder}} plan
+
+[group('ci-cd')]
+tf-upgrade:
+  terraform -chdir={{terraform-folder}} init -upgrade
