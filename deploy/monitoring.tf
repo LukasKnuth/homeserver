@@ -5,7 +5,7 @@ resource "kubernetes_namespace" "monit" {
 }
 
 resource "gotify_application" "diun" {
-  depends_on = [module.gotify]
+  depends_on = [module.ingress, module.gotify]
 
   name        = "Diun"
   description = "Checks cluster containers for image updates."
