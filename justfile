@@ -44,3 +44,7 @@ plan:
 [group('ci-cd')]
 tf-upgrade:
   terraform -chdir={{terraform-folder}} init -upgrade
+
+[group('1password')]
+op-service-account:
+  op service-account create "home_cgn_cluster" --vault $TF_VAR_onepassword_vault_id:read_items

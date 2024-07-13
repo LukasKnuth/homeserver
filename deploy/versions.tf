@@ -14,6 +14,11 @@ terraform {
       source  = "LukasKnuth/gotify"
       version = "0.2.1"
     }
+
+    onepassword = {
+      source  = "1Password/onepassword"
+      version = "2.1.0"
+    }
   }
 }
 
@@ -32,4 +37,9 @@ provider "gotify" {
   host_header = "gotify.rpi"
   username    = "admin"
   password    = "admin"
+}
+
+provider "onepassword" {
+  # All configuration through "OP_SERVICE_ACCOUNT_TOKEN" ENV variable.
+  # See "op-service-account" recipe to create.
 }
