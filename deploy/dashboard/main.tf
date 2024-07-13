@@ -52,6 +52,20 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
         { Nebula = [{ abbr = "NB", href = "https://nebula.tv" }] },
       ] }
     ])
+    "services.yaml" = yamlencode([
+      { Apps = [
+        { JDownloader = {
+          href = "https://my.jdownloader.org"
+          ping = "192.168.107.4"
+          widget = {
+            type     = "jdownloader"
+            client   = "JDownloader@root"
+            username = data.onepassword_item.jdownloader.username
+            password = data.onepassword_item.jdownloader.password
+          }
+        } }
+      ] }
+    ])
     "widgets.yaml" = yamlencode([
       {
         search = {
@@ -77,11 +91,15 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
     "kubernetes.yaml" = yamlencode({ mode = "cluster" })
     # NOTE Even if we don't use them, we specify empty files here. This prevents
     # the Dashboard from trying to copy defaults to the readonly Filesystem
-    "custom.css"    = ""
-    "custom.js"     = ""
-    "services.yaml" = ""
-    "docker.yaml"   = ""
+    "custom.css"  = ""
+    "custom.js"   = ""
+    "docker.yaml" = ""
   }
+}
+
+data "onepassword_item" "jdownloader" {
+  vault = var.onepassword_vault_id
+  uuid  = "4iovm26ps6faszs55bkllv6gsi"
 }
 
 locals {

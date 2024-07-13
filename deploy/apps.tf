@@ -5,9 +5,10 @@ resource "kubernetes_namespace" "apps" {
 }
 
 module "dashboard" {
-  source         = "./dashboard"
-  namespace      = kubernetes_namespace.apps.metadata.0.name
-  apps_namespace = kubernetes_namespace.apps.metadata.0.name
+  source               = "./dashboard"
+  namespace            = kubernetes_namespace.apps.metadata.0.name
+  apps_namespace       = kubernetes_namespace.apps.metadata.0.name
+  onepassword_vault_id = var.onepassword_vault_id
 }
 
 module "testapp" {

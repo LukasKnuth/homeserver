@@ -8,3 +8,9 @@ variable "s3_endpoint" {
   description = "Endpoint to which Litestream will replicate data via the S3 protocol"
 }
 
+variable "onepassword_vault_id" {
+  type        = string
+  sensitive   = true
+  description = "The UUID of the 1Password Vault to read secrets from"
+}
+
