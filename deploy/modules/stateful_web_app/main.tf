@@ -20,6 +20,11 @@ resource "kubernetes_config_map_v1" "litestream_config" {
     # This DOES support multiple databases and multiple replicas per DB...
     # https://litestream.io/reference/config/#database-settings
     basename(local.litestream_config_path) = yamlencode({
+      logging = {
+        level  = "info"
+        type   = "json"
+        stderr = false
+      }
       dbs = [{
         path = var.sqlite_path,
         replicas = [{
