@@ -37,7 +37,7 @@ provider "minio" {
 }
 
 provider "gotify" {
-  endpoint = "http://${var.cluster_static_ip}"
+  endpoint = "http://${var.cluster_static_ip_v4}"
   # NOTE: Allows sending the API requests before DNS server was configured.
   host_header = "gotify.rpi"
   username    = "admin"

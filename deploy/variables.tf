@@ -1,6 +1,11 @@
-variable "cluster_static_ip" {
+variable "cluster_static_ip_v4" {
   type        = string
-  description = "The main IP, static IP through which the cluster is accessible for users"
+  description = "The main IPv4, static IP through which the cluster is accessible for users"
+}
+
+variable "cluster_static_ip_v6" {
+  type        = string
+  description = "The main IPv6, static IP through which the cluster is accessible for users"
 }
 
 variable "s3_endpoint" {

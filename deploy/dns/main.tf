@@ -38,7 +38,8 @@ resource "kubernetes_config_map_v1" "dns_config" {
     $ORIGIN rpi.
     @ 3600 IN SOA @ me.lknuth.dev. ( 2024070102 7200 3600 1209600 3600 )
     @ 3600 IN NS ns
-    * 3600 IN A ${var.target_ip}
+    * 3600 IN A ${var.target_ip_v4}
+    * 3600 IN AAAA ${var.target_ip_v6}
     EOT
   }
 }

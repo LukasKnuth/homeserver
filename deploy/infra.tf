@@ -16,9 +16,10 @@ module "ingress" {
 }
 
 module "dns" {
-  source    = "./dns"
-  namespace = kubernetes_namespace.infra.metadata.0.name
-  target_ip = var.cluster_static_ip
+  source       = "./dns"
+  namespace    = kubernetes_namespace.infra.metadata.0.name
+  target_ip_v4 = var.cluster_static_ip_v4
+  target_ip_v6 = var.cluster_static_ip_v6
 }
 
 resource "gotify_application" "diun" {
