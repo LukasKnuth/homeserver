@@ -18,10 +18,16 @@
     # This means that it's different for _every_ Raspberry Pi Hardware device!
     - interface: enxe45f012b8369
       dhcp: false
-      addresses: ["192.168.107.3/24"]
+      addresses:
+        # TODO can we load these from ENV config?
+        - "192.168.107.3/24"
+        - "fd00:affe:cafe:107::3/48"
       routes:
+        # TODO how do I test these? (Pod in cluster and IPv6 only connection?) are they needed?
         - network: 0.0.0.0/0
           gateway: 192.168.107.1
+        - network: ::/0
+          gateway: fd00:affe:cafe:107:d624:ddff:fed9:7b78
 
 # Pick the nodeIP from the static IP network.
 # NOTE: Not sure if this is required, added it following the troubleshooting guide when my node
