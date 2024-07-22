@@ -70,7 +70,7 @@ module "gotify" {
     "gethomepage.dev/group"         = "Monitoring"
     "gethomepage.dev/widget.type"   = "gotify"
     "gethomepage.dev/widget.fields" = "[\"messages\"]"
-    # TODO change this if either name, namespace or expose_port change!
+    # NOTE change this if either name, namespace or expose_port change!
     "gethomepage.dev/widget.url" = "http://gotify.apps.svc.cluster.local"
     "gethomepage.dev/widget.key" = gotify_client.dashboard.token
   }
@@ -84,3 +84,36 @@ module "gotify" {
   s3_endpoint        = var.s3_endpoint
 }
 
+module "wiki" {
+  source    = "./modules/stateful_web_app"
+  name      = "silicon"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "bityard/silicon:0.1.2"
+  dashboard_attributes = {
+    "gethomepage.dev/name" = "Wiki"
+  }
+  expose_port     = 5000
+  fqdn            = "wiki.rpi"
+  sqlite_path     = "/home/silicon/instance/silicon.sqlite"
+  sqlite_file_uid = 5000 # silicon
+  sqlite_file_gid = 5000 # silicon
+  s3_secret_name  = kubernetes_secret_v1.litestream_config.metadata.0.name
+  s3_bucket       = minio_s3_bucket.litestream_destination.bucket
+  s3_endpoint     = var.s3_endpoint
+}
+
+module "watchlist" {
+  source    = "./modules/stateful_web_app"
+  name      = "watcharr"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "ghcr.io/sbondco/watcharr:v1.41.0"
+  dashboard_attributes = {
+    "gethomepage.dev/description" = "Watchlist"
+  }
+  expose_port    = 3080
+  fqdn           = "watchlist.rpi"
+  sqlite_path    = "/data/watcharr.db"
+  s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+  s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+  s3_endpoint    = var.s3_endpoint
+}
