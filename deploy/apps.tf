@@ -117,3 +117,24 @@ module "watchlist" {
   s3_bucket      = minio_s3_bucket.litestream_destination.bucket
   s3_endpoint    = var.s3_endpoint
 }
+
+module "notes" {
+  source = "./modules/stateful_web_app"
+  # NOTE: Can't just be memos, see https://github.com/usememos/memos/issues/1782#issuecomment-1576627426
+  name      = "memos-notes"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "ghcr.io/usememos/memos:0.22.4"
+  dashboard_attributes = {
+    "gethomepage.dev/name" = "Notes"
+  }
+  env = {
+    "MEMOS_PUBLIC" = true
+  }
+  expose_port    = 5230
+  fqdn           = "notes.rpi"
+  sqlite_path    = "/var/opt/memos/memos_prod.db"
+  s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+  s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+  s3_endpoint    = var.s3_endpoint
+}
+
