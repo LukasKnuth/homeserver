@@ -13,3 +13,13 @@ variable "onepassword_vault_id" {
   sensitive   = true
   description = "The 1Password vault to read user credentials from"
 }
+
+variable "bookmarks" {
+  description = "Bookmarks for pages available to search/open directly"
+  type = object({
+    Work          = list(tuple([string, string])),
+    Tools         = list(tuple([string, string])),
+    Procrastinate = list(tuple([string, string]))
+  })
+}
+

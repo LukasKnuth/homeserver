@@ -10,7 +10,7 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       theme = "light"
       color = "white"
       layout = [
-        { Apps = { columns = 4 } },
+        { Apps = { style = "row", columns = 3 } },
         { Monitoring = { columns = 1 } },
         { Infra = { columns = 1 } },
         { Work = { style = "row", columns = 3 } },
@@ -27,31 +27,13 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       hideErrors  = true
       statusStyle = "dot"
     })
-    "bookmarks.yaml" = yamlencode([
-      { Work = [
-        { Backend = [{ abbr = "BA", href = "https://github.com/sevenmind/backend" }] },
-        { Kubernetes = [{ abbr = "KU", href = "https://github.com/sevenmind/7mind-kubernetes" }] },
-        { APIv1 = [{ abbr = "A1", href = "https://github.com/sevenmind/7mind-api-v1" }] },
-        { "API Contracts" = [{ abbr = "AC", href = "https://github.com/sevenmind/api-contracts" }] },
-        { Infrastructure = [{ abbr = "IF", href = "https://github.com/sevenmind/infrastructure" }] },
-        { PubSub = [{ abbr = "PS", href = "https://console.cloud.google.com/cloudpubsub?project=mind-f62c0" }] },
-        { "Cloud SQL" = [{ abbr = "PS", href = "https://console.cloud.google.com/sql/instances?project=mind-f62c0" }] },
-        { Cluster = [{ abbr = "K8", href = "https://console.cloud.google.com/kubernetes/clusters/details/europe-west3/eu/details?project=mind-f62c0" }] },
-        { Log = [{ abbr = "DD", href = "https://app.datadoghq.eu/logs" }] },
-        { Synthetics = [{ abbr = "SY", href = "https://app.datadoghq.eu/synthetics/tests" }] },
-        { Traces = [{ abbr = "TR", href = "https://app.datadoghq.eu/apm/traces" }] },
-      ] },
-      { Tools = [
-        { Excalidraw = [{ abbr = "EX", href = "https://excalidraw.com" }] },
-        { Regex101 = [{ abbr = "RG", href = "https://regex101.com" }] },
-        { "Sequence Diagrams" = [{ abbr = "SQ", href = "https://www.websequencediagrams.com/app" }] },
-        { "D2 Diagrm Lang Playground" = [{ abbr = "D2", href = "https://play.d2lang.com" }] },
-      ] },
-      { Procrastinate = [
-        { HackerNews = [{ abbr = "HN", href = "https://news.ycombinator.com" }] },
-        { Nebula = [{ abbr = "NB", href = "https://nebula.tv" }] },
-      ] }
-    ])
+    "bookmarks.yaml" = yamlencode(
+      [for group, entries in var.bookmarks :
+        { (group) = [for entry in entries :
+          { (entry[0]) = [{ abbr = substr(join("", regexall("[A-Z0-9].*?", entry[0])), 0, 2), href = (entry[1]) }] }
+        ] }
+      ]
+    )
     "services.yaml" = yamlencode([
       { Apps = [
         { JDownloader = {
@@ -77,16 +59,6 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
           showSearchSuggestions = true
         }
       },
-      # {
-      #   kubernetes = {
-      #     # TODO This fails currently, probably because Metrics aren't deployed...
-      #     cluster = {
-      #       show   = true
-      #       cpu    = true
-      #       memory = true
-      #     }
-      #   }
-      # }
     ])
     "kubernetes.yaml" = yamlencode({ mode = "cluster" })
     # NOTE Even if we don't use them, we specify empty files here. This prevents

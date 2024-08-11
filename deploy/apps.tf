@@ -9,6 +9,38 @@ module "dashboard" {
   namespace            = kubernetes_namespace.apps.metadata.0.name
   apps_namespace       = kubernetes_namespace.apps.metadata.0.name
   onepassword_vault_id = var.onepassword_vault_id
+  bookmarks = {
+    Work : [
+      ["Backend", "https://github.com/sevenmind/backend"],
+      ["Kubernetes", "https://github.com/sevenmind/7mind-kubernetes"],
+      ["APIv1", "https://github.com/sevenmind/7mind-api-v1"],
+      ["Infrastructure", "https://github.com/sevenmind/infrastructure"],
+      ["API Contracts", "https://github.com/sevenmind/api-contracts"],
+      ["PubSub", "https://console.cloud.google.com/cloudpubsub?project=mind-f62c0"],
+      ["Cluster", "https://console.cloud.google.com/kubernetes/clusters/details/europe-west3/eu/details?project=mind-f62c0"],
+      ["Cloud SQL", "https://console.cloud.google.com/sql/instances?project=mind-f62c0"],
+      ["Logs", "https://app.datadoghq.eu/logs"],
+      ["Synthetics", "https://app.datadoghq.eu/synthetics/tests"],
+      ["Traces", "https://app.datadoghq.eu/apm/traces"],
+      ["Architecture Meeting", "https://www.notion.so/7mind/719d7469767c402bbf77a7930deb4f31"],
+      ["Maintenance Meeting", "https://linear.app/7mind/view/a2ba1524-ba24-4a02-b343-58c1fa25ab54"],
+      ["Vault", "https://vault.6mind.de/"],
+      ["Github Notifications", "https://github.com/notifications?query=reason%3Aparticipating"],
+    ],
+    Tools : [
+      ["Excalidraw", "https://excalidraw.com"],
+      ["Regex101", "https://regex101.com"],
+      ["Seq Diagram", "https://www.websequencediagrams.com/app"],
+      ["D2 Diagram", "https://play.d2lang.com"],
+      ["Github Tokens", "https://github.com/settings/tokens"],
+    ],
+    Procrastinate : [
+      ["HackerNews", "https://news.ycombinator.com"],
+      ["Nebula", "https://nebula.tv"],
+      ["Sliggy", "https://www.twitch.tv/sliggytv/videos"],
+      ["Sideshow", "https://www.twitch.tv/sideshow/videos"],
+    ]
+  }
 }
 
 module "testapp" {
@@ -20,6 +52,9 @@ module "testapp" {
   env = {
     "SYMFONY__ENV__DOMAIN_NAME"     = "http://wallabag.rpi"
     "SYMFONY__ENV__DATABASE_DRIVER" = "pdo_sqlite"
+  }
+  dashboard_attributes = {
+    "gethomepage.dev/name" = "Articles"
   }
   fqdn            = "wallabag.rpi"
   sqlite_path     = "/var/www/wallabag/data/db/wallabag.sqlite"
@@ -38,6 +73,9 @@ module "nocodb" {
   env = {
     "NC_DISABLE_ERR_REPORT" = "true"
     "NC_DISABLE_TELE"       = "true"
+  }
+  dashboard_attributes = {
+    "gethomepage.dev/name" = "Tables"
   }
   expose_port        = 8080
   liveness_get_path  = "/api/v1/health"
@@ -108,7 +146,7 @@ module "watchlist" {
   namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "ghcr.io/sbondco/watcharr:v1.41.0"
   dashboard_attributes = {
-    "gethomepage.dev/description" = "Watchlist"
+    "gethomepage.dev/name" = "Watchlist"
   }
   expose_port    = 3080
   fqdn           = "watchlist.rpi"
