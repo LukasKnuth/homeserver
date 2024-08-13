@@ -26,6 +26,7 @@ module "dashboard" {
       ["Maintenance Meeting", "https://linear.app/7mind/view/a2ba1524-ba24-4a02-b343-58c1fa25ab54"],
       ["Vault", "https://vault.6mind.de/"],
       ["Github Notifications", "https://github.com/notifications?query=reason%3Aparticipating"],
+      ["Old Docs", "https://docs.6mind.de"],
     ],
     Tools : [
       ["Excalidraw", "https://excalidraw.com"],
@@ -33,6 +34,7 @@ module "dashboard" {
       ["Seq Diagram", "https://www.websequencediagrams.com/app"],
       ["D2 Diagram", "https://play.d2lang.com"],
       ["Github Tokens", "https://github.com/settings/tokens"],
+      ["Garmin Calendar", "https://connect.garmin.com/modern/calendar"],
     ],
     Procrastinate : [
       ["HackerNews", "https://news.ycombinator.com"],
@@ -163,13 +165,13 @@ module "notes" {
   namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "ghcr.io/usememos/memos:0.22.4"
   dashboard_attributes = {
-    "gethomepage.dev/name" = "Notes"
+    "gethomepage.dev/name" = "Thoughts"
   }
   env = {
     "MEMOS_PUBLIC" = true
   }
   expose_port    = 5230
-  fqdn           = "notes.rpi"
+  fqdn           = "thoughts.rpi"
   sqlite_path    = "/var/opt/memos/memos_prod.db"
   s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
   s3_bucket      = minio_s3_bucket.litestream_destination.bucket
