@@ -27,6 +27,7 @@ module "dashboard" {
       ["Vault", "https://vault.6mind.de/"],
       ["Github Notifications", "https://github.com/notifications?query=reason%3Aparticipating"],
       ["Old Docs", "https://docs.6mind.de"],
+      ["Personio", "https://7mind-gmbh.personio.de/"],
     ],
     Tools : [
       ["Excalidraw", "https://excalidraw.com"],
@@ -35,6 +36,10 @@ module "dashboard" {
       ["D2 Diagram", "https://play.d2lang.com"],
       ["Github Tokens", "https://github.com/settings/tokens"],
       ["Garmin Calendar", "https://connect.garmin.com/modern/calendar"],
+      ["LanguageTool", "https://languagetool.org/"],
+      ["UUID Generator", "https://www.uuidgenerator.net/"],
+      ["Base64 Coder", "https://www.base64decode.org/"],
+      ["JWT Debugger", "https://jwt.io/#debugger-io"],
     ],
     Procrastinate : [
       ["HackerNews", "https://news.ycombinator.com"],
@@ -165,13 +170,13 @@ module "notes" {
   namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "ghcr.io/usememos/memos:0.22.4"
   dashboard_attributes = {
-    "gethomepage.dev/name" = "Thoughts"
+    "gethomepage.dev/name" = "Diary"
   }
   env = {
     "MEMOS_PUBLIC" = true
   }
   expose_port    = 5230
-  fqdn           = "thoughts.rpi"
+  fqdn           = "deardiary.rpi"
   sqlite_path    = "/var/opt/memos/memos_prod.db"
   s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
   s3_bucket      = minio_s3_bucket.litestream_destination.bucket
