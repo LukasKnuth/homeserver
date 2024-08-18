@@ -1,5 +1,5 @@
 output "internal_service_url" {
-  value       = "http://${var.name}.${var.namespace}.svc.cluster.local:${var.expose_port}"
+  value       = "http://${var.name}.${var.namespace}.svc.cluster.local"
   description = "Base URL for calling the App from INSIDE the cluster"
 }
 

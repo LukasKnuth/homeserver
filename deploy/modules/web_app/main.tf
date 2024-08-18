@@ -10,6 +10,7 @@ locals {
   litestream_config_path = "/etc/litestream.yml"
   data_volume            = "application-state"
   config_volume          = "litestream-config"
+  web_port               = 80
 }
 
 resource "kubernetes_config_map_v1" "litestream_config" {
@@ -232,7 +233,8 @@ resource "kubernetes_service" "web_service" {
   spec {
     selector = local.match_labels
     port {
-      port = var.expose_port
+      target_port = var.expose_port
+      port        = local.web_port
     }
   }
 }
@@ -258,7 +260,7 @@ resource "kubernetes_ingress_v1" "web_ingress" {
             service {
               name = kubernetes_service.web_service.metadata.0.name
               port {
-                number = kubernetes_service.web_service.spec.0.port.0.port
+                number = local.web_port
               }
             }
           }
