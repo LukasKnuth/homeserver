@@ -37,9 +37,9 @@ module "dashboard" {
       ["Github Tokens", "https://github.com/settings/tokens"],
       ["Garmin Calendar", "https://connect.garmin.com/modern/calendar"],
       ["LanguageTool", "https://languagetool.org/"],
-      ["UUID Generator", "https://www.uuidgenerator.net/"],
-      ["Base64 Coder", "https://www.base64decode.org/"],
-      ["JWT Debugger", "https://jwt.io/#debugger-io"],
+      ["UUID Generator", "${module.devtools.external_service_url}/uuid-generator"],
+      ["Base64 Coder", "${module.devtools.external_service_url}/base64-string-converter"],
+      ["JWT Debugger", "${module.devtools.external_service_url}/jwt-parser"],
     ],
     Procrastinate : [
       ["HackerNews", "https://news.ycombinator.com"],
@@ -193,5 +193,17 @@ module "notes" {
     s3_bucket      = minio_s3_bucket.litestream_destination.bucket
     s3_endpoint    = var.s3_endpoint
   }
+}
+
+module "devtools" {
+  source    = "./modules/web_app"
+  name      = "devtools"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "ghcr.io/corentinth/it-tools:2024.5.13-a0bc346"
+  env = {
+    "VITE_TRACKER_ENABLED" = false
+  }
+  expose_port = 80
+  fqdn        = "devtools.rpi"
 }
 
