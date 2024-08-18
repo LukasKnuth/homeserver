@@ -51,7 +51,7 @@ module "dashboard" {
 }
 
 module "testapp" {
-  source      = "./modules/stateful_web_app"
+  source      = "./modules/web_app"
   name        = "wallabag"
   namespace   = kubernetes_namespace.apps.metadata.0.name
   image       = "wallabag/wallabag:2.6.9"
@@ -75,7 +75,7 @@ module "testapp" {
 }
 
 module "nocodb" {
-  source    = "./modules/stateful_web_app"
+  source    = "./modules/web_app"
   name      = "nocodb"
   namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "nocodb/nocodb:0.251.1"
@@ -103,7 +103,7 @@ resource "gotify_client" "dashboard" {
 }
 
 module "gotify" {
-  source    = "./modules/stateful_web_app"
+  source    = "./modules/web_app"
   name      = "gotify"
   namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "ghcr.io/gotify/server-arm64:2.5.0"
@@ -136,7 +136,7 @@ module "gotify" {
 }
 
 module "wiki" {
-  source    = "./modules/stateful_web_app"
+  source    = "./modules/web_app"
   name      = "silicon"
   namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "bityard/silicon:0.1.2"
@@ -156,7 +156,7 @@ module "wiki" {
 }
 
 module "watchlist" {
-  source    = "./modules/stateful_web_app"
+  source    = "./modules/web_app"
   name      = "watcharr"
   namespace = kubernetes_namespace.apps.metadata.0.name
   image     = "ghcr.io/sbondco/watcharr:v1.41.0"
@@ -174,7 +174,7 @@ module "watchlist" {
 }
 
 module "notes" {
-  source = "./modules/stateful_web_app"
+  source = "./modules/web_app"
   # NOTE: Can't just be memos, see https://github.com/usememos/memos/issues/1782#issuecomment-1576627426
   name      = "memos-notes"
   namespace = kubernetes_namespace.apps.metadata.0.name
