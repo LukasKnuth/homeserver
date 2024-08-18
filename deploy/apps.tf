@@ -63,13 +63,15 @@ module "testapp" {
   dashboard_attributes = {
     "gethomepage.dev/name" = "Articles"
   }
-  fqdn            = "wallabag.rpi"
-  sqlite_path     = "/var/www/wallabag/data/db/wallabag.sqlite"
-  sqlite_file_uid = 65534 # user "nobody"
-  sqlite_file_gid = 65534 # group "nobody"
-  s3_secret_name  = kubernetes_secret_v1.litestream_config.metadata.0.name
-  s3_bucket       = minio_s3_bucket.litestream_destination.bucket
-  s3_endpoint     = var.s3_endpoint
+  fqdn = "wallabag.rpi"
+  sqlite_replicate = {
+    file_path      = "/var/www/wallabag/data/db/wallabag.sqlite"
+    file_uid       = 65534 # user "nobody"
+    file_gid       = 65534 # group "nobody"
+    s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+    s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+    s3_endpoint    = var.s3_endpoint
+  }
 }
 
 module "nocodb" {
@@ -88,10 +90,12 @@ module "nocodb" {
   liveness_get_path  = "/api/v1/health"
   readiness_get_path = "/api/v1/health"
   fqdn               = "nocodb.rpi"
-  sqlite_path        = "/usr/app/data/noco.db"
-  s3_secret_name     = kubernetes_secret_v1.litestream_config.metadata.0.name
-  s3_bucket          = minio_s3_bucket.litestream_destination.bucket
-  s3_endpoint        = var.s3_endpoint
+  sqlite_replicate = {
+    file_path      = "/usr/app/data/noco.db"
+    s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+    s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+    s3_endpoint    = var.s3_endpoint
+  }
 }
 
 resource "gotify_client" "dashboard" {
@@ -123,10 +127,12 @@ module "gotify" {
   readiness_get_path = "/health"
   liveness_get_path  = "/health"
   fqdn               = "gotify.rpi"
-  sqlite_path        = "/app/data/gotify.db"
-  s3_secret_name     = kubernetes_secret_v1.litestream_config.metadata.0.name
-  s3_bucket          = minio_s3_bucket.litestream_destination.bucket
-  s3_endpoint        = var.s3_endpoint
+  sqlite_replicate = {
+    file_path      = "/app/data/gotify.db"
+    s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+    s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+    s3_endpoint    = var.s3_endpoint
+  }
 }
 
 module "wiki" {
@@ -137,14 +143,16 @@ module "wiki" {
   dashboard_attributes = {
     "gethomepage.dev/name" = "Wiki"
   }
-  expose_port     = 5000
-  fqdn            = "wiki.rpi"
-  sqlite_path     = "/home/silicon/instance/silicon.sqlite"
-  sqlite_file_uid = 5000 # silicon
-  sqlite_file_gid = 5000 # silicon
-  s3_secret_name  = kubernetes_secret_v1.litestream_config.metadata.0.name
-  s3_bucket       = minio_s3_bucket.litestream_destination.bucket
-  s3_endpoint     = var.s3_endpoint
+  expose_port = 5000
+  fqdn        = "wiki.rpi"
+  sqlite_replicate = {
+    file_path      = "/home/silicon/instance/silicon.sqlite"
+    file_uid       = 5000 # silicon
+    file_gid       = 5000 # silicon
+    s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+    s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+    s3_endpoint    = var.s3_endpoint
+  }
 }
 
 module "watchlist" {
@@ -155,12 +163,14 @@ module "watchlist" {
   dashboard_attributes = {
     "gethomepage.dev/name" = "Watchlist"
   }
-  expose_port    = 3080
-  fqdn           = "watchlist.rpi"
-  sqlite_path    = "/data/watcharr.db"
-  s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
-  s3_bucket      = minio_s3_bucket.litestream_destination.bucket
-  s3_endpoint    = var.s3_endpoint
+  expose_port = 3080
+  fqdn        = "watchlist.rpi"
+  sqlite_replicate = {
+    file_path      = "/data/watcharr.db"
+    s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+    s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+    s3_endpoint    = var.s3_endpoint
+  }
 }
 
 module "notes" {
@@ -175,11 +185,13 @@ module "notes" {
   env = {
     "MEMOS_PUBLIC" = true
   }
-  expose_port    = 5230
-  fqdn           = "deardiary.rpi"
-  sqlite_path    = "/var/opt/memos/memos_prod.db"
-  s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
-  s3_bucket      = minio_s3_bucket.litestream_destination.bucket
-  s3_endpoint    = var.s3_endpoint
+  expose_port = 5230
+  fqdn        = "deardiary.rpi"
+  sqlite_replicate = {
+    file_path      = "/var/opt/memos/memos_prod.db"
+    s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+    s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+    s3_endpoint    = var.s3_endpoint
+  }
 }
 

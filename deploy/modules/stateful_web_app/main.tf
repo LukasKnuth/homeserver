@@ -4,6 +4,8 @@ locals {
     "app.kubernetes.io/managed-by" = "terraform"
     "app.kubernetes.io/component"  = "app"
   }
+  # Empty list == false, one-item list == true. Easier to use with `for_each`
+  enable_litestream      = var.sqlite_replicate != null ? toset(["enabled"]) : toset([])
   litestream_image       = "litestream/litestream:0.3"
   litestream_config_path = "/etc/litestream.yml"
   data_volume            = "application-state"
@@ -11,6 +13,8 @@ locals {
 }
 
 resource "kubernetes_config_map_v1" "litestream_config" {
+  for_each = local.enable_litestream
+
   metadata {
     name      = "${var.name}-litestream-config"
     namespace = var.namespace
@@ -26,12 +30,12 @@ resource "kubernetes_config_map_v1" "litestream_config" {
         stderr = false
       }
       dbs = [{
-        path = var.sqlite_path,
+        path = var.sqlite_replicate.file_path,
         replicas = [{
           type        = "s3"
-          endpoint    = var.s3_endpoint
+          endpoint    = var.sqlite_replicate.s3_endpoint
           skip-verify = true
-          bucket      = var.s3_bucket
+          bucket      = var.sqlite_replicate.s3_bucket
           path        = var.name
         }]
       }]
@@ -39,10 +43,20 @@ resource "kubernetes_config_map_v1" "litestream_config" {
   }
 }
 
+moved {
+  # We want this to be optional, so we use `for_each` and do it 0 times when we don't need it.
+  # This also means that to access it, we need to use the key from the iteration.
+  from = kubernetes_config_map_v1.litestream_config
+  to   = kubernetes_config_map_v1.litestream_config["enabled"]
+}
+
 resource "kubernetes_deployment" "app" {
   metadata {
     name      = var.name
     namespace = var.namespace
+    labels = {
+      "homeserver.lknuth.dev/sqlite-replicated" = var.sqlite_replicate != null ? "true" : "false"
+    }
   }
 
   spec {
@@ -62,84 +76,96 @@ resource "kubernetes_deployment" "app" {
         dynamic "security_context" {
           # Use a consistent Group for all Containers to avoid root-containers fucking
           # permissions for non-root containers.
-          for_each = var.sqlite_file_gid == null ? [] : [1]
+          for_each = try(var.sqlite_replicate.file_gid, null) != null ? [1] : []
           content {
-            fs_group = var.sqlite_file_gid
+            fs_group = var.sqlite_replicate.file_gid
           }
         }
 
-        volume {
-          name = local.config_volume
-          config_map {
-            name = kubernetes_config_map_v1.litestream_config.metadata.0.name
+        dynamic "volume" {
+          for_each = local.enable_litestream
+          content {
+            name = local.config_volume
+            config_map {
+              name = kubernetes_config_map_v1.litestream_config["enabled"].metadata.0.name
+            }
           }
         }
 
-        volume {
-          name = local.data_volume
-          # TODO Litestream says we _should_ use a PVC...
-          empty_dir {}
+        dynamic "volume" {
+          for_each = local.enable_litestream
+          content {
+            name = local.data_volume
+            # TODO Litestream says we _should_ use a PVC...
+            empty_dir {}
+          }
         }
 
         # Litestream Init Restore from Snapshot
-        init_container {
-          name  = "litestream-restore-snapshot"
-          image = local.litestream_image
-          args = [
-            "restore",
-            "-if-db-not-exists",
-            "-if-replica-exists",
-            var.sqlite_path
-          ]
+        dynamic "init_container" {
+          for_each = local.enable_litestream
+          content {
+            name  = "litestream-restore-snapshot"
+            image = local.litestream_image
+            args = [
+              "restore",
+              "-if-db-not-exists",
+              "-if-replica-exists",
+              var.sqlite_replicate.file_path
+            ]
 
-          security_context {
-            run_as_user  = var.sqlite_file_uid
-            run_as_group = var.sqlite_file_gid
-          }
+            security_context {
+              run_as_user  = var.sqlite_replicate.file_uid
+              run_as_group = var.sqlite_replicate.file_gid
+            }
 
-          volume_mount {
-            name       = local.config_volume
-            mount_path = local.litestream_config_path
-            sub_path   = basename(local.litestream_config_path)
-          }
+            volume_mount {
+              name       = local.config_volume
+              mount_path = local.litestream_config_path
+              sub_path   = basename(local.litestream_config_path)
+            }
 
-          volume_mount {
-            name       = local.data_volume
-            mount_path = dirname(var.sqlite_path)
-          }
+            volume_mount {
+              name       = local.data_volume
+              mount_path = dirname(var.sqlite_replicate.file_path)
+            }
 
-          env_from {
-            secret_ref {
-              name = var.s3_secret_name
+            env_from {
+              secret_ref {
+                name = var.sqlite_replicate.s3_secret_name
+              }
             }
           }
         }
 
         # Litestream Sidecar
-        container {
-          name  = "litestream-sidecar"
-          image = local.litestream_image
-          args  = ["replicate"]
+        dynamic "container" {
+          for_each = local.enable_litestream
+          content {
+            name  = "litestream-sidecar"
+            image = local.litestream_image
+            args  = ["replicate"]
 
-          security_context {
-            run_as_user  = var.sqlite_file_uid
-            run_as_group = var.sqlite_file_gid
-          }
+            security_context {
+              run_as_user  = var.sqlite_replicate.file_uid
+              run_as_group = var.sqlite_replicate.file_gid
+            }
 
-          volume_mount {
-            name       = local.config_volume
-            mount_path = local.litestream_config_path
-            sub_path   = basename(local.litestream_config_path)
-          }
+            volume_mount {
+              name       = local.config_volume
+              mount_path = local.litestream_config_path
+              sub_path   = basename(local.litestream_config_path)
+            }
 
-          volume_mount {
-            name       = local.data_volume
-            mount_path = dirname(var.sqlite_path)
-          }
+            volume_mount {
+              name       = local.data_volume
+              mount_path = dirname(var.sqlite_replicate.file_path)
+            }
 
-          env_from {
-            secret_ref {
-              name = var.s3_secret_name
+            env_from {
+              secret_ref {
+                name = var.sqlite_replicate.s3_secret_name
+              }
             }
           }
         }
@@ -157,9 +183,12 @@ resource "kubernetes_deployment" "app" {
             }
           }
 
-          volume_mount {
-            name       = local.data_volume
-            mount_path = dirname(var.sqlite_path)
+          dynamic "volume_mount" {
+            for_each = local.enable_litestream
+            content {
+              name       = local.data_volume
+              mount_path = dirname(var.sqlite_replicate.file_path)
+            }
           }
 
           port {

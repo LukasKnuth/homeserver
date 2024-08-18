@@ -1,51 +1,51 @@
 variable "name" {
   type        = string
+  nullable    = false
   description = "The name of the application."
 }
 
 variable "namespace" {
   type        = string
+  nullable    = false
   description = "The namespace to deploy ALL application resources into."
 }
 
 variable "image" {
   type        = string
+  nullable    = false
   description = "The image descriptor to fetch and run the App"
 }
 
 variable "expose_port" {
   type        = number
+  nullable    = false
   description = "The port to expose to the world for interacting with the application."
 }
 
 variable "fqdn" {
   type        = string
+  nullable    = false
   description = "The FQDN the application should be avilable under"
 }
 
-variable "sqlite_path" {
-  type        = string
-  description = "The full path to the SQLite file which stores the application state."
-}
-
-variable "s3_bucket" {
-  type        = string
-  description = "The S3 bucket to replicate the SQLite Database to."
-}
-
-variable "s3_endpoint" {
-  type        = string
-  description = "The S3 Endpoint to replicate the SQLite Database to"
-}
-
-variable "s3_secret_name" {
-  type        = string
-  description = "Name of the Secret containing S3 credentials for replication. MUST be in the same Namespace as the App!"
+variable "sqlite_replicate" {
+  type = object({
+    file_path      = string
+    file_uid       = optional(number, null)
+    file_gid       = optional(number, null)
+    s3_bucket      = string
+    s3_endpoint    = string
+    s3_secret_name = string
+  })
+  nullable    = true
+  default     = null
+  description = "The full path to the SQLite file which stores the application state. If NOT set, disables Litestream replication."
 }
 
 # ------------ Overridable --------------
 variable "env" {
   type        = map(string)
+  nullable    = false
   description = "Any ENVorinment variables"
   default     = {}
 }
@@ -53,6 +53,7 @@ variable "env" {
 variable "dashboard_attributes" {
   # See https://gethomepage.dev/latest/configs/kubernetes/#automatic-service-discovery
   type        = map(string)
+  nullable    = false
   description = "Metadata attributes to set on the app to customize their dashboard appearance"
   default     = {}
 }
@@ -71,16 +72,3 @@ variable "liveness_get_path" {
   description = "The URL to HTTP GET for the Liveness Probe"
 }
 
-variable "sqlite_file_uid" {
-  type        = number
-  nullable    = true
-  default     = null
-  description = "The UID of the user who should own the SQLite file"
-}
-
-variable "sqlite_file_gid" {
-  type        = number
-  nullable    = true
-  default     = null
-  description = "The GID of the user who should own the SQLite file"
-}
