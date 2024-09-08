@@ -22,12 +22,15 @@ module "dashboard" {
       ["Logs", "https://app.datadoghq.eu/logs"],
       ["Synthetics", "https://app.datadoghq.eu/synthetics/tests"],
       ["Traces", "https://app.datadoghq.eu/apm/traces"],
+      ["Monitors", "https://app.datadoghq.eu/monitors/"],
       ["Architecture Meeting", "https://www.notion.so/7mind/719d7469767c402bbf77a7930deb4f31"],
       ["Maintenance Meeting", "https://linear.app/7mind/view/a2ba1524-ba24-4a02-b343-58c1fa25ab54"],
       ["Vault", "https://vault.6mind.de/"],
       ["Github Notifications", "https://github.com/notifications?query=reason%3Aparticipating"],
       ["Old Docs", "https://docs.6mind.de"],
       ["Personio", "https://7mind-gmbh.personio.de/"],
+      ["Reimbursment", "https://portal.payhawk.com/"],
+      ["Travel", "https://app.travelperk.com/"],
     ],
     Tools : [
       ["Excalidraw", "https://excalidraw.com"],
@@ -40,12 +43,14 @@ module "dashboard" {
       ["UUID Generator", "${module.devtools.external_service_url}/uuid-generator"],
       ["Base64 Coder", "${module.devtools.external_service_url}/base64-string-converter"],
       ["JWT Debugger", "${module.devtools.external_service_url}/jwt-parser"],
+      ["Percentage Calc", "${module.devtools.external_service_url}/percentage-calculator"],
     ],
     Procrastinate : [
       ["HackerNews", "https://news.ycombinator.com"],
       ["Nebula", "https://nebula.tv"],
       ["Sliggy", "https://www.twitch.tv/sliggytv/videos"],
       ["Sideshow", "https://www.twitch.tv/sideshow/videos"],
+      ["Supertf", "https://www.twitch.tv/supertf/videos"],
     ]
   }
 }
