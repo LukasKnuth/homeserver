@@ -107,18 +107,24 @@ resource "gotify_client" "dashboard" {
   name = "Dashboard Widget"
 }
 
+locals {
+  gotify_db_path = "/app/database/gotify.db"
+}
+
 module "gotify" {
   source    = "./modules/web_app"
   name      = "gotify"
   namespace = kubernetes_namespace.apps.metadata.0.name
-  image     = "ghcr.io/gotify/server-arm64:2.5.0"
+  image     = "ghcr.io/lukasknuth/gotify-slack-webhook-bundled:v0.1.1"
   env = {
     "GOTIFY_REGISTRATION"               = true
     "TZ"                                = "Europe/Berlin"
     "GOTIFY_SERVER_SSL_ENABLED"         = false
     "GOTIFY_SERVER_SSL_REDIRECTTOHTTPS" = false
     "GOTIFY_DATABASE_DIALECT"           = "sqlite3"
-    "GOTIFY_DATABASE_CONNECTION"        = "data/gotify.db"
+    # Using a different path here because the mount can't overlay `/app/data/plugins`
+    # otherwise the bundled plugins can't be found.
+    "GOTIFY_DATABASE_CONNECTION" = local.gotify_db_path
   }
   dashboard_attributes = {
     "gethomepage.dev/group"         = "Monitoring"
@@ -133,7 +139,7 @@ module "gotify" {
   liveness_get_path  = "/health"
   fqdn               = "gotify.rpi"
   sqlite_replicate = {
-    file_path      = "/app/data/gotify.db"
+    file_path      = local.gotify_db_path
     s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
     s3_bucket      = minio_s3_bucket.litestream_destination.bucket
     s3_endpoint    = var.s3_endpoint
