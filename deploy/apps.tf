@@ -23,7 +23,7 @@ module "dashboard" {
       ["Synthetics", "https://app.datadoghq.eu/synthetics/tests"],
       ["Traces", "https://app.datadoghq.eu/apm/traces"],
       ["Monitors", "https://app.datadoghq.eu/monitors/"],
-      ["Architecture Meeting", "https://www.notion.so/7mind/719d7469767c402bbf77a7930deb4f31"],
+      ["Architecture Meeting", "https://www.notion.so/7mind/Backend-Architecture-b9683cdf5eba4ae4a7fcf9d97327221d"],
       ["Maintenance Meeting", "https://linear.app/7mind/view/a2ba1524-ba24-4a02-b343-58c1fa25ab54"],
       ["Vault", "https://vault.6mind.de/"],
       ["Github Notifications", "https://github.com/notifications?query=reason%3Aparticipating"],
