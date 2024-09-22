@@ -8,7 +8,7 @@ resource "kubernetes_config_map" "fluent_bit" {
 
   data = {
     # Find problems with Litestream replication and raise them
-    "litestream-replicate.d.conf" = <<-EOF
+    "out_gotify.conf"    = <<-EOF
     [FILTER]
       Name grep
       Alias litestream-replicate
@@ -34,27 +34,7 @@ resource "kubernetes_config_map" "fluent_bit" {
       Match problem.*
       Format msgpack
     EOF
-    # Stolen from https://www.talos.dev/v1.7/talos-guides/configuration/logging/
-    "custom_parsers.conf" = <<-EOF
-    [PARSER]
-      Name containerd
-      Format regex
-      Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
-      Time_Key time
-      Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-    EOF
-    # Main config, tailing kubernetes logs and enriching with Kubernetes API metadata
-    "main.conf" = <<-EOF
-    [SERVICE]
-      Daemon Off
-      Flush 5
-      Log_Level warn
-      Parsers_File custom_parsers.conf
-      HTTP_Server On
-      HTTP_Listen 0.0.0.0
-      HTTP_Port ${local.http_port}
-      Health_Check On
-
+    "in_kubernetes.conf" = <<-EOF
     [INPUT]
       Name tail
       Alias kubernetes
@@ -81,8 +61,30 @@ resource "kubernetes_config_map" "fluent_bit" {
       Match kubernetes.*
       Add source kubernetes
       Remove logtag
+    EOF
+    # Stolen from https://www.talos.dev/v1.7/talos-guides/configuration/logging/
+    "custom_parsers.conf" = <<-EOF
+    [PARSER]
+      Name containerd
+      Format regex
+      Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+      Time_Key time
+      Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+    EOF
+    # Main config, tailing kubernetes logs and enriching with Kubernetes API metadata
+    "main.conf" = <<-EOF
+    [SERVICE]
+      Daemon Off
+      Flush 5
+      Log_Level info
+      Parsers_File custom_parsers.conf
+      HTTP_Server On
+      HTTP_Listen 0.0.0.0
+      HTTP_Port ${local.http_port}
+      Health_Check On
 
-    @INCLUDE *.d.conf
+    @INCLUDE in_kubernetes.conf
+    @INCLUDE out_gotify.conf
     EOF
   }
 }
