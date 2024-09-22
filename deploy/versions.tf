@@ -19,6 +19,11 @@ terraform {
       source  = "1Password/onepassword"
       version = "2.1.0"
     }
+
+    netparse = {
+      source  = "gmeligio/netparse"
+      version = "0.0.2"
+    }
   }
 }
 

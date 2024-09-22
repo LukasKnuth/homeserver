@@ -44,6 +44,29 @@ provider "registry.terraform.io/aminueza/minio" {
   ]
 }
 
+provider "registry.terraform.io/gmeligio/netparse" {
+  version     = "0.0.2"
+  constraints = "0.0.2"
+  hashes = [
+    "h1:B3J5AVM36MoiJ28srpnFeGuFqOqIHiaFlwHt+K1tZFQ=",
+    "zh:0e4081090327a335ade3879d0e36e8e49e9a8a8b56aebcec8e4764f6b979fbac",
+    "zh:132a6c9205a1300427a95f7571eaf3186345ffcecb8db21d08b0f9973d50327b",
+    "zh:21810ee6f8b6835b8a800f63aa7867c4f121eb804f32b6ba59453105772cc605",
+    "zh:22eb617ca92dac830e742ee3853cde98b14c13d8e5b55e4dec0c5149d91e1dfb",
+    "zh:4048cd5b7472c0fcf40e10bf53729660507f16a1fcd8cf8ea2b0c86a9584cf2f",
+    "zh:46cc2490ad4075affc71e79caa7c39a600304660e9f839c89f7d6f4d0f7ea3aa",
+    "zh:4eda1360d976e844629b098ba57d28b92ed2bea35171d764a001ee272efa99fc",
+    "zh:526fdb8cba0d0ef4031df2db277ea9b8628565fa260f606b1ffc809c5841459b",
+    "zh:890df766e9b839623b1f0437355032a3c006226a6c200cd911e15ee1a9014e9f",
+    "zh:96a0afc0381d5bebb90484b80f1f8aa5084fce118cd37e8938d750e596857ddc",
+    "zh:af6b9a62395c9d6bee3a7bfc78ead28e15573d6b14571a3f06c5ef2145d31e55",
+    "zh:d35246a542828473767029be786629a2501938c21820fa9d47ece8d49b1f7cd1",
+    "zh:e86cf379d4d6b2a1475eebe1997e2f374ae74d865106aca81b53a745f256819d",
+    "zh:f2cc17f15b403b3fc625623fe1ca52fe3223ad45aadba6b0c4d01c160479b807",
+    "zh:f877c3b8534680a1e1b0c154b773bea6752354010fdfb0d92f26144ea6f67745",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/kubernetes" {
   version     = "2.31.0"
   constraints = "2.31.0"
