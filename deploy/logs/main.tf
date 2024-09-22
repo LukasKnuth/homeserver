@@ -1,3 +1,7 @@
+locals {
+  slack_webhook = provider::netparse::parse_url(var.gotify_slack_webhook)
+}
+
 # Most details are stolen from the official Helm chart over at:
 # https://github.com/fluent/helm-charts/blob/642a95978ea469d4bf66e233a29fbf29f80572cc/charts/fluent-bit/values.yaml#L458
 resource "kubernetes_config_map" "fluent_bit" {
@@ -29,10 +33,14 @@ resource "kubernetes_config_map" "fluent_bit" {
       Format json_lines
 
     [OUTPUT]
-      Name stdout
-      Alias problems
+      Name slack
+      Alias gotify
       Match problem.*
-      Format msgpack
+      # "slack" output requires URL to have HTTPS schema, but we don't have/want certs
+      # Send HTTPS traffic to HTTP endpoint - but its okay, we disable TLS verification
+      # https://docs.fluentbit.io/manual/administration/transport-security
+      Webhook https://${local.slack_webhook.host}:80${local.slack_webhook.path}
+      tls Off
     EOF
     "in_kubernetes.conf" = <<-EOF
     [INPUT]
