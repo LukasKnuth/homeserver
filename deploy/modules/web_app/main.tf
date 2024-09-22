@@ -233,6 +233,7 @@ resource "kubernetes_service" "web_service" {
   spec {
     selector = local.match_labels
     port {
+      name        = "web"
       target_port = var.expose_port
       port        = local.web_port
     }
