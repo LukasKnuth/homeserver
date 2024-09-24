@@ -125,7 +125,7 @@ resource "kubernetes_cron_job_v1" "diun" {
 
             container {
               name  = "diun"
-              image = "crazymax/diun:4.28.0"
+              image = "ghcr.io/crazy-max/diun:4.28.0"
               args  = ["serve"]
 
               volume_mount {
