@@ -61,8 +61,11 @@ resource "kubernetes_deployment" "app" {
   }
 
   spec {
-    # NOTE: Litestream does NOT support more than one replica atm.
+    # NOTE: Litestream does NOT support more than one instance at the same time!
     replicas = 1
+    strategy {
+      type = "Recreate"
+    }
 
     selector {
       match_labels = local.match_labels
