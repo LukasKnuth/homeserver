@@ -38,6 +38,7 @@ module "container_images" {
   cron_schedule            = "0 3 * * *"
   gotify_endpoint          = module.gotify.internal_service_url
   gotify_application_token = gotify_application.diun.token
+  onepassword_vault_id     = var.onepassword_vault_id
 }
 
 resource "gotify_application" "log_analysis_problems" {

@@ -23,3 +23,9 @@ variable "gotify_application_token" {
   sensitive   = true
   description = "Gotify Application Token to publich notifications with"
 }
+
+variable "onepassword_vault_id" {
+  type        = string
+  sensitive   = true
+  description = "The 1Password vault to read user credentials from"
+}

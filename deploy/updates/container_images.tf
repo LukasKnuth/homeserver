@@ -1,3 +1,8 @@
+data "onepassword_item" "docker_hub" {
+  vault = var.onepassword_vault_id
+  uuid  = "5h6sphozmuti543vkjiih3xs6m"
+}
+
 resource "kubernetes_config_map_v1" "diun_config" {
   metadata {
     name      = "diun-config"
@@ -21,12 +26,12 @@ resource "kubernetes_config_map_v1" "diun_config" {
         }
       }
       regopts = [
-        # {
-        #   # TODO do we need creds to circumvent Docker Hub anonymous rate-limiting?
-        #   name     = "docker.io"
-        #   username = ""
-        #   password = "" # TODO via provider/1password?
-        # }
+        {
+          name     = "docker.io"
+          selector = "image"
+          username = data.onepassword_item.docker_hub.username
+          password = data.onepassword_item.docker_hub.password
+        }
       ]
       providers = {
         kubernetes = {
