@@ -11,12 +11,18 @@ resource "kubernetes_config_map_v1" "diun_config" {
 
   data = {
     "diun.yaml" = yamlencode({
+      defaults = {
+        # NOTE: We're using specific image tags, so we need to watch the whole repo for new images.
+        watchRepo   = true
+        excludeTags = ["latest"]
+        maxTags     = 5
+        sortTags    = "semver"
+      }
       watch = {
         # NOTE: we're explcitly NOT setting "schedule", because we want to run Diun
         # once _now_, scheduled through the Cron Job.
-        schedule = null
-        # TODO it has healthchecks integration here. Setup?
-        runOnStartup : true
+        schedule     = null
+        runOnStartup = true
       }
       notif = {
         gotify = {
