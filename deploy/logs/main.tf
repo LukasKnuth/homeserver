@@ -26,6 +26,14 @@ resource "kubernetes_config_map" "fluent_bit" {
       Alias litestream-replication-problems
       Rule $level ^(WARN|ERROR)$ problem.$TAG true
 
+    [FILTER]
+      Name throttle
+      Match problem.*
+      # Max burst 6msg/2h, 12h until recovered, 12msg/day
+      Rate 1
+      Interval 2h
+      Window 6
+
     [OUTPUT]
       Name stdout
       Alias stdout
