@@ -218,3 +218,27 @@ module "devtools" {
   fqdn        = "devtools.rpi"
 }
 
+# TODO this probably should be it's own thing, not a simple web-app
+# https://github.com/aceberg/WatchYourLAN
+module "watch_your_lan" {
+  source    = "./modules/web_app"
+  name      = "watch-your-lan"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "ghcr.io/aceberg/watchyourlan:2.0.3"
+  env = {
+    "TZ" = "Europe/Berlin"
+    # TODO requires "pod.spec.hostNetwork: true" - Does this work in unprivileged namespace?
+    "IFACES" = "enxe45f012b8369" # TODO manually taken from talos config. Probably different on other devices. Taint this?
+    # https://containrrr.dev/shoutrrr/v0.8/services/gotify/
+    "SHOUTRRR_URL" = "gotify://${module.gotify.internal_service_url}/<token>" # TODO generate gotify app and use here!
+  }
+  expose_port = 8840
+  fqdn        = "watchlan.rpi"
+  sqlite_replicate = {
+    file_path      = "" # TODO find out.
+    s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
+    s3_bucket      = minio_s3_bucket.litestream_destination.bucket
+    s3_endpoint    = var.s3_endpoint
+  }
+}
+
