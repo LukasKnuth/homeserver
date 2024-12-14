@@ -218,3 +218,24 @@ module "devtools" {
   fqdn        = "devtools.rpi"
 }
 
+module "budgeting" {
+  source    = "./modules/web_app"
+  name      = "actual-budget"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "ghcr.io/actualbudget/actual-server:24.8.0"
+  env = {
+
+  }
+  expose_port = 5006
+  fqdn        = "budget.rpi"
+  # TODO set this up with NFS on NAS - ALso make backup that contains both this folder and Minio data
+  # Alternatively, this could also be stored on-disk on the RPI, in the persistent storage partition. Read up on that...
+  # https://www.talos.dev/v1.8/kubernetes-guides/configuration/local-storage/
+  remote_storage = {
+    folder_path = "/data"
+    nfs_host    = "192.168.107.4"
+    nfs_user    = "asfd"
+    nfs_pass    = "asdf"
+  }
+}
+
