@@ -61,9 +61,17 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       },
     ])
     "kubernetes.yaml" = yamlencode({ mode = "cluster" })
+    "custom.css"      = <<-EOT
+    /* Disable clicking/hovering on search result box. This has no ID, but there is only one dialog element so far... */
+    dialog {
+      cursor: not-allowed;
+    }
+    dialog ul {
+      pointer-events: none;
+    }
+    EOT
     # NOTE Even if we don't use them, we specify empty files here. This prevents
     # the Dashboard from trying to copy defaults to the readonly Filesystem
-    "custom.css"  = ""
     "custom.js"   = ""
     "docker.yaml" = ""
   }
