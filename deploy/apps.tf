@@ -25,9 +25,6 @@ module "dashboard" {
       ["Monitors", "https://app.datadoghq.eu/monitors/"],
       ["Architecture Meeting", "https://www.notion.so/7mind/Backend-Architecture-b9683cdf5eba4ae4a7fcf9d97327221d"],
       ["Maintenance Meeting", "https://linear.app/7mind/view/a2ba1524-ba24-4a02-b343-58c1fa25ab54"],
-      ["Vault", "https://vault.6mind.de/"],
-      ["Github Notifications", "https://github.com/notifications?query=reason%3Aparticipating"],
-      ["Old Docs", "https://docs.6mind.de"],
       ["Personio", "https://7mind-gmbh.personio.de/"],
       ["Reimbursment", "https://portal.payhawk.com/"],
       ["Travel", "https://app.travelperk.com/"],
@@ -38,7 +35,6 @@ module "dashboard" {
       ["Seq Diagram", "https://www.websequencediagrams.com/app"],
       ["D2 Diagram", "https://play.d2lang.com"],
       ["Github Tokens", "https://github.com/settings/tokens"],
-      ["Garmin Calendar", "https://connect.garmin.com/modern/calendar"],
       ["LanguageTool", "https://languagetool.org/"],
       ["UUID Generator", "${module.devtools.external_service_url}/uuid-generator"],
       ["Base64 Coder", "${module.devtools.external_service_url}/base64-string-converter"],
@@ -51,6 +47,7 @@ module "dashboard" {
       ["Sliggy", "https://www.twitch.tv/sliggytv/videos"],
       ["Sideshow", "https://www.twitch.tv/sideshow/videos"],
       ["Supertf", "https://www.twitch.tv/supertf/videos"],
+      ["Northernlion", "https://www.twitch.tv/northernlion/videos"],
     ]
   }
 }
