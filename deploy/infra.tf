@@ -22,26 +22,6 @@ module "dns" {
   target_ip_v6 = var.cluster_static_ip_v6
 }
 
-resource "gotify_application" "diun" {
-  depends_on = [module.ingress, module.gotify]
-
-  name        = "Diun"
-  description = "Checks cluster containers for image updates."
-}
-
-module "container_images" {
-  source    = "./updates"
-  namespace = kubernetes_namespace.infra.metadata.0.name
-  observe_namespaces = [
-    kubernetes_namespace.apps.metadata.0.name,
-    kubernetes_namespace.infra.metadata.0.name
-  ]
-  cron_schedule            = "0 3 * * *"
-  gotify_endpoint          = module.gotify.internal_service_url
-  gotify_application_token = gotify_application.diun.token
-  onepassword_vault_id     = var.onepassword_vault_id
-}
-
 resource "gotify_application" "log_analysis_problems" {
   depends_on = [module.ingress, module.gotify]
 
