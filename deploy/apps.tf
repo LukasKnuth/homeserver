@@ -47,7 +47,7 @@ module "dashboard" {
       ["Sliggy", "https://www.twitch.tv/sliggytv/videos"],
       ["Sideshow", "https://www.twitch.tv/sideshow/videos"],
       ["Supertf", "https://www.twitch.tv/supertf/videos"],
-      ["Northernlion", "https://www.twitch.tv/northernlion/videos"],
+      ["NorthernLion", "https://www.twitch.tv/northernlion/videos"],
     ]
   }
 }
@@ -124,6 +124,7 @@ module "gotify" {
     "GOTIFY_DATABASE_CONNECTION" = local.gotify_db_path
   }
   dashboard_attributes = {
+    "gethomepage.dev/name"          = "Gotify"
     "gethomepage.dev/group"         = "Monitoring"
     "gethomepage.dev/widget.type"   = "gotify"
     "gethomepage.dev/widget.fields" = "[\"messages\"]"
@@ -172,6 +173,9 @@ module "devtools" {
   image     = "ghcr.io/corentinth/it-tools:2024.5.13-a0bc346"
   env = {
     "VITE_TRACKER_ENABLED" = false
+  }
+  dashboard_attributes = {
+    "gethomepage.dev/name" = "Developer Tools"
   }
   expose_port = 80
   fqdn        = "devtools.rpi"
