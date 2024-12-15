@@ -22,18 +22,32 @@ module "dns" {
   target_ip_v6 = var.cluster_static_ip_v6
 }
 
-resource "gotify_application" "log_analysis_problems" {
-  depends_on = [module.ingress, module.gotify]
-
-  name        = "Log Analysis"
-  description = "Problems found by analyzing container logs"
-}
-
 resource "gotify_plugin" "slack_webhook" {
   depends_on = [module.ingress, module.gotify]
 
   module_path = "github.com/LukasKnuth/gotify-slack-webhook"
   enabled     = true
+}
+
+resource "gotify_application" "releases" {
+  depends_on = [module.ingress, module.gotify]
+
+  name        = "Releases"
+  description = "Checks and notifies on new releases."
+}
+
+module "releases" {
+  source               = "./releases"
+  namespace            = kubernetes_namespace.infra.metadata.0.name
+  cron_schedule        = "0 3 * * *"
+  gotify_slack_webhook = "${module.gotify.internal_service_url}${gotify_plugin.slack_webhook.webhook_path}/webhook/slack/${gotify_application.releases.token}"
+}
+
+resource "gotify_application" "log_analysis_problems" {
+  depends_on = [module.ingress, module.gotify]
+
+  name        = "Log Analysis"
+  description = "Problems found by analyzing container logs"
 }
 
 module "logs" {
