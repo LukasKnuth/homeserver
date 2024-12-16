@@ -9,14 +9,14 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       title = "Launchpad"
       theme = "light"
       color = "white"
-      layout = [
+      layout = concat([
         { Apps = { style = "row", columns = 3 } },
         { Monitoring = { columns = 1 } },
-        { Infra = { columns = 1 } },
-        { Work = { style = "row", columns = 3 } },
-        { Tools = { style = "row", columns = 3 } },
-        { Procrastinate = { style = "row", columns = 3 } },
-      ]
+        { Infra = { columns = 1 } }
+        # NOTE: map iteration orders by keys first, so NOT insertion order!
+        ], [for group, _entries in var.bookmarks :
+        { (group) = { style = "row", columns = 3 } }
+      ])
       headerStyle = "boxed"
       language    = "en"
       target      = "_self"

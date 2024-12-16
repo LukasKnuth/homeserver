@@ -16,10 +16,6 @@ variable "onepassword_vault_id" {
 
 variable "bookmarks" {
   description = "Bookmarks for pages available to search/open directly"
-  type = object({
-    Work          = list(tuple([string, string])),
-    Tools         = list(tuple([string, string])),
-    Procrastinate = list(tuple([string, string]))
-  })
+  type        = map(list(tuple([string, string])))
 }
 

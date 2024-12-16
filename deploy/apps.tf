@@ -10,7 +10,7 @@ module "dashboard" {
   apps_namespace       = kubernetes_namespace.apps.metadata.0.name
   onepassword_vault_id = var.onepassword_vault_id
   bookmarks = {
-    Work : [
+    "At Work" : [
       ["Backend", "https://github.com/sevenmind/backend"],
       ["Kubernetes", "https://github.com/sevenmind/7mind-kubernetes"],
       ["APIv1", "https://github.com/sevenmind/7mind-api-v1"],
@@ -29,7 +29,7 @@ module "dashboard" {
       ["Reimbursment", "https://portal.payhawk.com/"],
       ["Travel", "https://app.travelperk.com/"],
     ],
-    Tools : [
+    "Based Tools" : [
       ["Excalidraw", "https://excalidraw.com"],
       ["Regex101", "https://regex101.com"],
       ["Seq Diagram", "https://www.websequencediagrams.com/app"],
@@ -40,6 +40,12 @@ module "dashboard" {
       ["Base64 Coder", "${module.devtools.external_service_url}/base64-string-converter"],
       ["JWT Debugger", "${module.devtools.external_service_url}/jwt-parser"],
       ["Percentage Calc", "${module.devtools.external_service_url}/percentage-calculator"],
+    ],
+    "Daily Games" : [
+      ["Framed", "https://framed.wtf"],
+      ["Connections", "https://www.nytimes.com/games/connections"],
+      ["Gaps", "https://gaps.wtf"],
+      ["Wordle", "https://www.nytimes.com/games/wordle"]
     ],
     Procrastinate : [
       ["HackerNews", "https://news.ycombinator.com"],
