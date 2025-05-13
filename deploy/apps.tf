@@ -45,7 +45,9 @@ module "dashboard" {
       ["Framed", "https://framed.wtf"],
       ["Connections", "https://www.nytimes.com/games/connections"],
       ["Gaps", "https://gaps.wtf"],
-      ["Wordle", "https://www.nytimes.com/games/wordle"]
+      ["Wordle", "https://www.nytimes.com/games/wordle"],
+      ["keybr", "https://www.keybr.com/"],
+      ["monkeytype", "https://monkeytype.com/"]
     ],
     Procrastinate : [
       ["HackerNews", "https://news.ycombinator.com"],
