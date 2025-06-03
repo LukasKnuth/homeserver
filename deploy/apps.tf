@@ -81,6 +81,7 @@ module "testapp" {
     s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
     s3_bucket      = minio_s3_bucket.litestream_destination.bucket
     s3_endpoint    = var.s3_endpoint
+    verify_cron    = "0 2 * * 6" # 02:00 on Saturday
   }
 }
 
@@ -105,6 +106,7 @@ module "nocodb" {
     s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
     s3_bucket      = minio_s3_bucket.litestream_destination.bucket
     s3_endpoint    = var.s3_endpoint
+    verify_cron    = "20 2 * * 6" # 02:20 on Saturday
   }
 }
 
@@ -149,6 +151,7 @@ module "gotify" {
     s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
     s3_bucket      = minio_s3_bucket.litestream_destination.bucket
     s3_endpoint    = var.s3_endpoint
+    verify_cron    = "40 2 * * 6" # 02:40 on Saturday
   }
 }
 
@@ -171,6 +174,7 @@ module "notes" {
     s3_secret_name = kubernetes_secret_v1.litestream_config.metadata.0.name
     s3_bucket      = minio_s3_bucket.litestream_destination.bucket
     s3_endpoint    = var.s3_endpoint
+    verify_cron    = "0 3 * * 6" # 03:00 on Saturday
   }
 }
 

@@ -36,10 +36,11 @@ variable "sqlite_replicate" {
     s3_bucket      = string
     s3_endpoint    = string
     s3_secret_name = string
+    verify_cron    = string
   })
   nullable    = true
   default     = null
-  description = "The full path to the SQLite file which stores the application state. If NOT set, disables Litestream replication."
+  description = "Settings for SQLite database replication via Litestream. If not specified, no replication is set up."
 }
 
 # ------------ Overridable --------------

@@ -227,6 +227,90 @@ resource "kubernetes_deployment" "app" {
   }
 }
 
+data "healthchecksio_channel" "email" {
+  for_each = local.enable_litestream
+
+  kind = "email"
+}
+
+resource "healthchecksio_check" "verify_replication" {
+  for_each = local.enable_litestream
+
+  name = "${var.name}-litestream-verify"
+  desc = "Verify that a valid and integral SQLite database can be restored from Litestream replication"
+  tags = ["homeserver", "managed-by-terraform"]
+
+  channels = [data.healthchecksio_channel.email["enabled"].id]
+
+  schedule = var.sqlite_replicate.verify_cron
+  grace    = 300 # 5min
+  timezone = "Europe/Berlin"
+}
+
+resource "kubernetes_cron_job_v1" "verify_replication" {
+  for_each = local.enable_litestream
+
+  metadata {
+    name      = "${var.name}-litestream-verify"
+    namespace = var.namespace
+  }
+
+  spec {
+    schedule                      = var.sqlite_replicate.verify_cron
+    failed_jobs_history_limit     = 3
+    successful_jobs_history_limit = 1
+
+    job_template {
+      metadata {}
+      spec {
+        # Only run the one job
+        parallelism = 1
+        completions = 1
+
+        template {
+          metadata {}
+          spec {
+            volume {
+              name = local.config_volume
+              config_map {
+                name = kubernetes_config_map_v1.litestream_config["enabled"].metadata.0.name
+              }
+            }
+
+            container {
+              name  = "litestream-validate"
+              image = "ghcr.io/lukasknuth/homeserver-replica-verify:latest"
+
+              env {
+                name  = "HEALTHCHECKS_IO_URL"
+                value = healthchecksio_check.verify_replication["enabled"].ping_url
+              }
+
+              env {
+                # `litestream restore` needs the full path to the original database file.
+                name  = "APP_DB_PATH"
+                value = var.sqlite_replicate.file_path
+              }
+
+              volume_mount {
+                name       = local.config_volume
+                mount_path = local.litestream_config_path
+                sub_path   = basename(local.litestream_config_path)
+              }
+
+              env_from {
+                secret_ref {
+                  name = var.sqlite_replicate.s3_secret_name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 resource "kubernetes_service" "web_service" {
   metadata {
     name      = var.name
