@@ -6,5 +6,5 @@ RUN apk update && \
 
 COPY entrypoint.fish /app/entrypoint.fish
 
-ENTRYPOINT ["/usr/bin/fish", "/app/entrypoint.fish"]
-CMD []
+ENTRYPOINT ["/usr/bin/fish"]
+CMD ["/app/entrypoint.fish"]
