@@ -2,6 +2,7 @@ name: Build and Push `homeserver-replica-verify` Image
 
 # This GitHub action builds a new image if any image-related files are updated
 on:
+  workflow_dispatch:
   push:
     paths:
     - 'maintenance/replica-verify/**'
