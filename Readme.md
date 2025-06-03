@@ -39,6 +39,8 @@ This repository is a mono-repo which contains _everything_ required to setup the
   * `talos/` folder
 2. All workload deployments for Kubernetes via Terraform
   * `deploy/` folder
+3. Any scripts and docker images uses to maintain the server
+  * `maintenance/` folder
 
 ## Technology and Reasoning
 
@@ -105,9 +107,9 @@ I don't run regular backup jobs. Instead, I use [Litestream](https://litestream.
 Because restore operations are fast and backups continuous, I only use ephemeral storage on the server, meaning: When a Pod is deleted (for a restart or redeployment) it looses _all_ its local data. When the new Pod is then started, it first restores from the latest backup and then starts the application and continuous replication again.
 
 **Pros**
-+ No need to test my backups: They're restored on every application restart
 + There is no data locality - if a workload is scheduled to a new Node, it will restore the data from the backup to its local ephemeral storage
-+ No need to monitor Cronjobs, backups are continuous
++ Very limited chance to lose any data because replication is continuous
++ Verifying backup integrity is easy with `litestream restore` and `PRAGMA integrity_check`
 
 **Cons**
 - There is a theoretical chance that a high throughput application accumulates a large WAL which isn't fully replicated yet when it is shut down. Since the data is ephemeral, Litestream won't have a chance to "catch up" once it's restarted.
