@@ -12,7 +12,7 @@ The reason this is public is to be a **learning resource**. That's why it's lice
 
 * [just](https://github.com/casey/just) - To use the local `justfile` for commands
 * [direnv](https://github.com/direnv/direnv) - To automatically export ENV variables
-* [talosctl](https://www.talos.dev/v1.7/talos-guides/install/talosctl/) - To set up the cluster nodes
+* [talosctl](https://www.talos.dev/latest/talos-guides/install/talosctl/) - To set up the cluster nodes
 * [kubectl](https://kubernetes.io/docs/tasks/tools/) // [k9s](https://k9scli.io/) - To interact with the Kubernetes cluster
 * [terraform](https://www.terraform.io/) - To deploy workloads to the cluster
 
@@ -20,7 +20,7 @@ All these tools are referenced in the `justfile` in the root folder of this repo
 
 Then, run these commands:
 
-0. Flash the [Talos Metal RPi image](https://www.talos.dev/v1.7/talos-guides/install/single-board-computers/rpi_generic/) to an SD Card and insert it
+0. Flash the [Talos Metal RPi image](https://www.talos.dev/latest/talos-guides/install/single-board-computers/rpi_generic/) to an SD Card and insert it
 1. Review `.envrc` and adapt it to your situation
 2. **Once** generate Talos secrets `just gen-secrets`
   * Save this file somewhere and keep it secret
