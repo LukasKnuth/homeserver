@@ -13,9 +13,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platforms: []
     env:
       PLATFORMS: 'linux/amd64,linux/arm/v7,linux/arm64'
       REGISTRY: ghcr.io
