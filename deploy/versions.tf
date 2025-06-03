@@ -24,6 +24,11 @@ terraform {
       source  = "gmeligio/netparse"
       version = "0.0.2"
     }
+
+    healthchecksio = {
+      source  = "kristofferahl/healthchecksio"
+      version = "2.3.0"
+    }
   }
 }
 
@@ -47,4 +52,8 @@ provider "gotify" {
 provider "onepassword" {
   # All configuration through "OP_SERVICE_ACCOUNT_TOKEN" ENV variable.
   # See "op-service-account" recipe to create.
+}
+
+provider "healthchecksio" {
+  # API key configured through "HEALTHCHECKSIO_API_KEY" ENV variable.
 }
