@@ -243,8 +243,8 @@ resource "healthchecksio_check" "verify_replication" {
   channels = [data.healthchecksio_channel.email["enabled"].id]
 
   schedule = var.sqlite_replicate.verify_cron
-  grace    = 300 # 5min
-  timezone = "Europe/Berlin"
+  grace    = 300   # 5min
+  timezone = "UTC" # Talos Linux always uses UTC
 }
 
 resource "kubernetes_cron_job_v1" "verify_replication" {
