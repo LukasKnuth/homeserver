@@ -25,7 +25,7 @@ module "dashboard" {
       ["Monitors", "https://app.datadoghq.eu/monitors/"],
       ["Architecture Meeting", "https://www.notion.so/7mind/Backend-Architecture-b9683cdf5eba4ae4a7fcf9d97327221d"],
       ["Maintenance Meeting", "https://linear.app/7mind/view/a2ba1524-ba24-4a02-b343-58c1fa25ab54"],
-      ["Personio", "https://7mind-gmbh.personio.de/"],
+      ["Personio", "https://7nxt-gmbh.app.personio.com/"],
       ["Reimbursment", "https://portal.payhawk.com/"],
       ["Travel", "https://app.travelperk.com/"],
     ],
