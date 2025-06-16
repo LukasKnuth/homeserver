@@ -27,6 +27,11 @@ bootstrap ip:
 kubeconfig:
   talosctl kubeconfig ./kubeconfig
 
+[group('talos')]
+upgrade ip version:
+  # NOTE: Ensure this is the right version to upgrade _with_ (should be fine usually)
+  talosctl upgrade --preserve --nodes {{ip}} --image "ghcr.io/siderolabs/installer:{{version}}"
+
 terraform-folder := "./deploy"
 
 [group('ci-cd')]

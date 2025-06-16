@@ -1,8 +1,8 @@
 # Home Server
 
-The FULL configuration of my small RPi (= Raspberry Pi 4B) based server at home.
+The FULL configuration of my small Raspberry Pi 4B based server at home.
 
-I'm using the 4GB version to run all of this on a single machine. Everything runs off of a SD Card, no additional hardware required.
+I'm using the 4 GB version to run all of this on a single machine. Everything runs off of a SD Card, no additional hardware required.
 
 The reason this is public is to be a **learning resource**. That's why it's licensed as GPL-3.0.
 
@@ -31,9 +31,33 @@ Then, run these commands:
 7. Download local `kubeconfig` with `just kubeconfig`
 8. Deploy workloads `just deploy`
 
+### Upgrades
+
+Based on the [official Talos documentation](https://www.talos.dev/latest/talos-guides/upgrading-talos/) the command is `just upgrade <ip> <version>`.
+
+> [!NOTE]
+> The Talos documentation says: "We recommend using the version [of `talosctl`] that matches the current running version of the cluster."
+>
+> This can easily be achived by downloading the appropriate `talosctl` binary from the [GitHub Releases](https://github.com/siderolabs/talos/releases/) page.
+> I have done so in my previous upgrades, but I don't think this is _strictly_ required.
+
+The upgrade path should be:
+
+1. Check current **Server** version with `talosctl version`
+2. Upgrade to the latest patch version of the _current_ version
+3. Upgrade to latest patch version of _next_ minor version
+4. Repeat until on latest
+
+```
+Example: v1.0 -> v1.0.6 -> v1.1.2 -> v1.2.1
+```
+
+If something breaks, we can roll back _one_ upgrade version via `talosctl rollback`.
+This should not be necessary, Talos will automatically do this if booting the new image fails.
+
 ## Repo Organization
 
-This repository is a mono-repo which contains _everything_ required to setup the home server. This includes:
+This repository is a mono-repo which contains _everything_ required to set up the home server. This includes:
 
 1. The configuration patches to Talos Linux default config (version 1.7)
   * `talos/` folder
