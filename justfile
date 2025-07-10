@@ -28,6 +28,13 @@ kubeconfig:
   talosctl kubeconfig ./kubeconfig
 
 [group('talos')]
+cert:
+  # Print cert expiry info
+  # If not expired, regen using `just kubeconfig`
+  # If expired: https://www.talos.dev/latest/talos-guides/howto/cert-management/
+  talosctl config info
+
+[group('talos')]
 upgrade ip version:
   # NOTE: Ensure this is the right version to upgrade _with_ (should be fine usually)
   talosctl upgrade --preserve --nodes {{ip}} --image "ghcr.io/siderolabs/installer:{{version}}"
