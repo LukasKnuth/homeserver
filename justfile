@@ -1,5 +1,3 @@
-set shell := ["bash", "-uc"]
-
 [group('talos')]
 gen-secrets:
   talosctl gen secrets
