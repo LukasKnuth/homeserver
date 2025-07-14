@@ -60,3 +60,22 @@ tf-upgrade:
 [group('1password')]
 op-service-account:
   op service-account create "home_cgn_cluster" --vault $TF_VAR_onepassword_vault_id:read_items
+
+[group('litestream')]
+restore app:
+  #!/usr/bin/env sh
+  # NOTE: Setup `LITESTREAM_ACCESS_KEY_ID` and `LITESTREAM_SECRET_ACCESS_KEY` ENV variables first!
+  # WHY? The CLI doesn't accept a custom Endpoint, but the config file does.
+  CONF=$(mktemp)
+  cat >$CONF <<EOF
+  "dbs":
+  - "path": "restore_me.db"
+    "replicas":
+    - "bucket": "home-cgn-litestream-replica"
+      "endpoint": "http://192.168.107.4:9000"
+      "type": "s3"
+      "path": "{{app}}"
+  EOF
+  litestream restore -o {{app}}.db -config $CONF "restore_me.db"
+  rm $CONF
+ 
