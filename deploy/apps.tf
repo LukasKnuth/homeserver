@@ -64,7 +64,7 @@ module "testapp" {
   source      = "./modules/web_app"
   name        = "wallabag"
   namespace   = kubernetes_namespace.apps.metadata.0.name
-  image       = "wallabag/wallabag:2.6.9"
+  image       = "wallabag/wallabag:2.6.13"
   expose_port = 80
   env = {
     "SYMFONY__ENV__DOMAIN_NAME"     = "http://wallabag.rpi"
