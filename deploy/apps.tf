@@ -89,7 +89,7 @@ module "nocodb" {
   source    = "./modules/web_app"
   name      = "nocodb"
   namespace = kubernetes_namespace.apps.metadata.0.name
-  image     = "nocodb/nocodb:0.251.1"
+  image     = "nocodb/nocodb:0.263.8"
   env = {
     "NC_DISABLE_ERR_REPORT" = "true"
     "NC_DISABLE_TELE"       = "true"
