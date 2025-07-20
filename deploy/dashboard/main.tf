@@ -72,8 +72,9 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
     EOT
     # NOTE Even if we don't use them, we specify empty files here. This prevents
     # the Dashboard from trying to copy defaults to the readonly Filesystem
-    "custom.js"   = ""
-    "docker.yaml" = ""
+    "custom.js"    = ""
+    "docker.yaml"  = ""
+    "proxmox.yaml" = ""
   }
 }
 
@@ -120,11 +121,20 @@ resource "kubernetes_deployment" "dashboard" {
 
         container {
           name  = "homepage"
-          image = "ghcr.io/gethomepage/homepage:v0.9.13"
+          image = "ghcr.io/gethomepage/homepage:v1.4.0"
 
           env {
             name  = "LOG_TARGETS"
             value = "stdout"
+          }
+
+          env {
+            # NOTE: This security feature is disabled, because we can't know the Pod IP
+            # beforehand. We can also not use Downward API because it requires ont only
+            # the IP but also the port.
+            # See https://github.com/gethomepage/homepage/discussions/4959
+            name  = "HOMEPAGE_ALLOWED_HOSTS"
+            value = "*"
           }
 
           volume_mount {
