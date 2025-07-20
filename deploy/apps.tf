@@ -60,7 +60,11 @@ module "dashboard" {
   }
 }
 
-module "testapp" {
+moved {
+  from = module.testapp
+  to   = module.wallabag
+}
+module "wallabag" {
   source      = "./modules/web_app"
   name        = "wallabag"
   namespace   = kubernetes_namespace.apps.metadata.0.name
