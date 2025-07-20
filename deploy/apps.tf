@@ -160,7 +160,7 @@ module "notes" {
   # NOTE: Can't just be memos, see https://github.com/usememos/memos/issues/1782#issuecomment-1576627426
   name      = "memos-notes"
   namespace = kubernetes_namespace.apps.metadata.0.name
-  image     = "ghcr.io/usememos/memos:0.22.4"
+  image     = "ghcr.io/usememos/memos:0.24.4"
   dashboard_attributes = {
     "gethomepage.dev/name" = "Diary"
   }
@@ -182,7 +182,7 @@ module "devtools" {
   source    = "./modules/web_app"
   name      = "devtools"
   namespace = kubernetes_namespace.apps.metadata.0.name
-  image     = "ghcr.io/corentinth/it-tools:2024.5.13-a0bc346"
+  image     = "ghcr.io/corentinth/it-tools:2024.10.22-7ca5933"
   env = {
     "VITE_TRACKER_ENABLED" = false
   }
