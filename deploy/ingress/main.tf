@@ -33,8 +33,14 @@ resource "kubernetes_cluster_role" "traefik-rbac" {
   }
 
   rule {
+    api_groups = ["discovery.k8s.io"]
+    resources  = ["endpointslices"]
+    verbs      = ["list", "watch"]
+  }
+
+  rule {
     api_groups = [""]
-    resources  = ["services", "endpoints"]
+    resources  = ["services", "nodes"]
     verbs      = ["get", "list", "watch"]
   }
 
@@ -93,7 +99,7 @@ resource "kubernetes_deployment" "traefik" {
 
         container {
           name  = "traefik"
-          image = "traefik:v3.0"
+          image = "traefik:v3.4.4"
           args = [
             "--providers.kubernetesingress=true",
             "--entrypoints.web.address=:8000/tcp",
