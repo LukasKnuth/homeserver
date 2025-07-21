@@ -144,7 +144,7 @@ resource "kubernetes_daemon_set_v1" "fluent_bit" {
 
         container {
           name  = "fluent-bit"
-          image = "cr.fluentbit.io/fluent/fluent-bit"
+          image = "cr.fluentbit.io/fluent/fluent-bit:4.0.4"
           args = [
             "--workdir=/fluent-bit/etc",
             "--config=/fluent-bit/etc/conf/main.conf"
