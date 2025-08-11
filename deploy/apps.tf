@@ -197,3 +197,45 @@ module "devtools" {
   fqdn        = "devtools.rpi"
 }
 
+resource "kubernetes_config_map_v1" "news_feeds" {
+  metadata {
+    name      = "news-feeds"
+    namespace = kubernetes_namespace.apps.metadata.0.name
+  }
+  data = {
+    "feeds.yml" = yamlencode({
+      feeds = [
+        { url = "https://bikepacking.com/news/readers-rig/feed/", group = "Biking" },
+        { url = "https://bytes.zone/index.xml", group = "Blogs" },
+        { url = "https://マリウス.com/index.xml", group = "Blogs" },
+        { url = "https://claytonwramsey.com/blog/rss.xml", group = "Blogs" },
+        { url = "https://jmswrnr.com/feed", group = "Blogs" },
+        { url = "https://mtlynch.io/index.xml", group = "Blogs" },
+        { url = "https://www.simplermachines.com/rss/", group = "Blogs" },
+        { url = "https://shatterzone.substack.com/feed", group = "Blogs" },
+        { url = "https://gieseanw.wordpress.com/feed/", group = "Blogs" }
+      ]
+    })
+  }
+}
+
+module "briefly" {
+  source    = "./modules/web_app"
+  name      = "briefly"
+  namespace = kubernetes_namespace.apps.metadata.0.name
+  image     = "ghcr.io/lukasknuth/briefly:0.1.1"
+  env = {
+    "TZ"           = "Europe/Berlin"
+    "CRON_REFRESH" = "0 8 * * *" # daily at 8:00am
+  }
+  config_map = {
+    name       = kubernetes_config_map_v1.news_feeds.metadata.0.name
+    mount_path = "/etc/briefly/"
+  }
+  dashboard_attributes = {
+    "gethomepage.dev/name" = "Feed"
+  }
+  expose_port = 4000
+  fqdn        = "news.rpi"
+}
+
