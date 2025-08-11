@@ -6,10 +6,12 @@ locals {
   }
   # Empty list == false, one-item list == true. Easier to use with `for_each`
   enable_litestream      = var.sqlite_replicate != null ? toset(["enabled"]) : toset([])
+  enable_app_config      = var.config_map != null ? toset(["enabled"]) : toset([])
   litestream_image       = "litestream/litestream:0.3"
   litestream_config_path = "/etc/litestream.yml"
   data_volume            = "application-state"
-  config_volume          = "litestream-config"
+  ls_config_volume       = "litestream-config"
+  app_config_volume      = "application-config"
   web_port               = 80
 }
 
@@ -89,7 +91,7 @@ resource "kubernetes_deployment" "app" {
         dynamic "volume" {
           for_each = local.enable_litestream
           content {
-            name = local.config_volume
+            name = local.ls_config_volume
             config_map {
               name = kubernetes_config_map_v1.litestream_config["enabled"].metadata.0.name
             }
@@ -102,6 +104,16 @@ resource "kubernetes_deployment" "app" {
             name = local.data_volume
             # TODO Litestream says we _should_ use a PVC...
             empty_dir {}
+          }
+        }
+
+        dynamic "volume" {
+          for_each = local.enable_app_config
+          content {
+            name = local.app_config_volume
+            config_map {
+              name = var.config_map.name
+            }
           }
         }
 
@@ -124,7 +136,7 @@ resource "kubernetes_deployment" "app" {
             }
 
             volume_mount {
-              name       = local.config_volume
+              name       = local.ls_config_volume
               mount_path = local.litestream_config_path
               sub_path   = basename(local.litestream_config_path)
             }
@@ -156,7 +168,7 @@ resource "kubernetes_deployment" "app" {
             }
 
             volume_mount {
-              name       = local.config_volume
+              name       = local.ls_config_volume
               mount_path = local.litestream_config_path
               sub_path   = basename(local.litestream_config_path)
             }
@@ -192,6 +204,15 @@ resource "kubernetes_deployment" "app" {
             content {
               name       = local.data_volume
               mount_path = dirname(var.sqlite_replicate.file_path)
+            }
+          }
+
+          dynamic "volume_mount" {
+            for_each = local.enable_app_config
+            content {
+              name       = local.app_config_volume
+              mount_path = var.config_map.mount_path
+              read_only  = true
             }
           }
 
@@ -271,7 +292,7 @@ resource "kubernetes_cron_job_v1" "verify_replication" {
           metadata {}
           spec {
             volume {
-              name = local.config_volume
+              name = local.ls_config_volume
               config_map {
                 name = kubernetes_config_map_v1.litestream_config["enabled"].metadata.0.name
               }
@@ -293,7 +314,7 @@ resource "kubernetes_cron_job_v1" "verify_replication" {
               }
 
               volume_mount {
-                name       = local.config_volume
+                name       = local.ls_config_volume
                 mount_path = local.litestream_config_path
                 sub_path   = basename(local.litestream_config_path)
               }

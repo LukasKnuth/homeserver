@@ -73,3 +73,12 @@ variable "liveness_get_path" {
   description = "The URL to HTTP GET for the Liveness Probe"
 }
 
+variable "config_map" {
+  type = object({
+    name       = string
+    mount_path = string
+  })
+  nullable    = true
+  default     = null
+  description = "Mounts the given `kubernetes_config_map_v1` into the deployment"
+}
