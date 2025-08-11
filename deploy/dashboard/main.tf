@@ -121,7 +121,7 @@ resource "kubernetes_deployment" "dashboard" {
 
         container {
           name  = "homepage"
-          image = "ghcr.io/gethomepage/homepage:v1.4.0"
+          image = "ghcr.io/gethomepage/homepage:v1.4.4"
 
           env {
             name  = "LOG_TARGETS"
