@@ -207,7 +207,7 @@ resource "kubernetes_config_map_v1" "news_feeds" {
       feeds = [
         { url = "https://bikepacking.com/news/readers-rig/feed/", group = "Biking" },
         { url = "https://bytes.zone/index.xml", group = "Blogs" },
-        { url = "https://マリウス.com/index.xml", group = "Blogs" },
+        { url = "https://xn--gckvb8fzb.com/index.xml", group = "Blogs" },
         { url = "https://claytonwramsey.com/blog/rss.xml", group = "Blogs" },
         { url = "https://jmswrnr.com/feed", group = "Blogs" },
         { url = "https://mtlynch.io/index.xml", group = "Blogs" },
