@@ -77,3 +77,6 @@ restore app:
   litestream restore -o {{app}}.db -config $CONF "restore_me.db"
   rm $CONF
  
+[group('traefik')]
+dashboard:
+  kubectl -n infra port-forward deployment/traefik 9000

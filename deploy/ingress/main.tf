@@ -96,36 +96,45 @@ resource "kubernetes_deployment" "traefik" {
 
       spec {
         service_account_name = kubernetes_service_account.traefik.metadata.0.name
+        # Allow direct access to host network. This allows binding to IPv6 addresses
+        # because the namespaced network for Pods is IPv4 only.
+        host_network = true
 
         container {
           name  = "traefik"
           image = "traefik:v3.4.4"
           args = [
             "--providers.kubernetesingress=true",
-            "--entrypoints.web.address=:8000/tcp",
-            "--entrypoints.traefik.address=:9000/tcp",
+            "--entrypoints.web.address=:80/tcp",
+            "--entrypoints.traefik.address=127.0.0.1:9000/tcp",
             "--api.insecure=true", # enables api/dashboard on "traefik" entrypoint
             "--ping=true"          # enables /ping on "traefik" entrypoint
           ]
 
           port {
+            # NOTE: Listens on loopback address and therefore isn't routed.
+            # Use `just dashboard` port forward to local machine when needed.
             container_port = 9000
             protocol       = "TCP"
             name           = "traefik"
           }
 
           port {
-            container_port = 8000
+            container_port = 80
             protocol       = "TCP"
             name           = "web"
-            # Expose this on the host directly.
+            # Expose this on the host directly, in combination with `host_network = true`.
             # This is the simple workaround for not having "LoadBalancer" type Service support
             # on bare metal (easily)
             host_port = 80
           }
 
+          # NOTE: We must specify `host = 127.0.0.1` here, because the `traefik` Endpoint above
+          # is bound to the loopback interface explicitly. Since we using `host_network = true`,
+          # the port would be publicly exposed, which we don't really want/need.
           liveness_probe {
             http_get {
+              host   = "127.0.0.1"
               path   = "/ping"
               port   = "traefik"
               scheme = "HTTP"
@@ -134,6 +143,7 @@ resource "kubernetes_deployment" "traefik" {
 
           readiness_probe {
             http_get {
+              host   = "127.0.0.1"
               path   = "/ping"
               port   = "traefik"
               scheme = "HTTP"
@@ -158,55 +168,3 @@ resource "kubernetes_ingress_class" "traefik" {
   }
 }
 
-# -------- DASHBOARD --------
-# NOTE: Traefik will print an error "Skipping service: no endpoints" for this Service when it
-# restarts. Reason: Traefik itself is the pod/endpoint backing the service. Since we use "Replace"
-# startegy, there is no "Ready"-state Pod for the service yet when it restarts. This causes
-# the log. The problem is resolved as soon as liveness/readiness probes for Traefik itself
-# succeeed and it's added to the service.
-resource "kubernetes_service" "traefik_dashboard" {
-  metadata {
-    name      = "traefik-dashboard"
-    namespace = var.namespace
-  }
-
-  spec {
-    selector = local.match_labels
-    port {
-      port = 9000
-    }
-  }
-}
-
-resource "kubernetes_ingress_v1" "traefik_dashboard" {
-  metadata {
-    name      = "traefik-dashboard"
-    namespace = var.namespace
-    annotations = {
-      "gethomepage.dev/enabled"      = true
-      "gethomepage.dev/name"         = "Traefik Dashboard"
-      "gethomepage.dev/group"        = "Infra"
-      "gethomepage.dev/pod-selector" = "app.kubernetes.io/name=traefik"
-    }
-  }
-
-  spec {
-    rule {
-      host = "traefik.rpi"
-      http {
-        path {
-          path      = "/"
-          path_type = "Prefix"
-          backend {
-            service {
-              name = kubernetes_service.traefik_dashboard.metadata.0.name
-              port {
-                number = 9000
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}

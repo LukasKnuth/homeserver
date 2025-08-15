@@ -15,17 +15,28 @@ resource "kubernetes_config_map_v1" "dns_config" {
     namespace = var.namespace
   }
 
+  # NOTE: The pod uses `host_network = true` to bind to host network ports. Because of this,
+  # we can't bind to wildcard IPs `0.0.0.0`, because the `init` service of Talos Linux also
+  # binds port 53 on an interface. Binding to wild card fails with "address already in use".
+  #
+  # Also NOTE: since we use the `bind` plugin specifically, we must repeat it in **both**
+  # server blocks, see https://coredns.io/plugins/bind/#avoiding-listener-contention
+  #
+  # Lastly, NOTE that we bind the ports for liveness/readiness probes to the loopback
+  # interface because we don't need to expose them. The probes must specify `host` though!
   data = {
     basename(local.config_path) = <<-EOT
     rpi {
+      bind ${var.target_ip_v4} ${var.target_ip_v6}
       file ${local.db_path} {
         reload 0
       }
     }
     
     . {
-      health
-      ready
+      bind ${var.target_ip_v4} ${var.target_ip_v6}
+      health 127.0.0.1:8080
+      ready 127.0.0.1:8181
       forward . tls://9.9.9.9 {
         tls_servername dns.quad9.net
         health_check 5s
@@ -75,6 +86,10 @@ resource "kubernetes_deployment" "dns_server" {
           }
         }
 
+        # Allow direct access to host network. This allows binding to IPv6 addresses
+        # because the namespaced network for Pods is IPv4 only.
+        host_network = true
+
         container {
           name  = "dns"
           image = "coredns/coredns:1.11.1"
@@ -96,7 +111,7 @@ resource "kubernetes_deployment" "dns_server" {
             container_port = 53
             protocol       = "UDP"
             name           = "dns"
-            # Expose this on the host directly.
+            # Expose this on the host directly, in combination with `host_network = true`.
             host_port = 53
           }
 
@@ -108,6 +123,7 @@ resource "kubernetes_deployment" "dns_server" {
 
           liveness_probe {
             http_get {
+              host   = "127.0.0.1"
               path   = "/health"
               port   = "healthness"
               scheme = "HTTP"
@@ -122,6 +138,7 @@ resource "kubernetes_deployment" "dns_server" {
 
           readiness_probe {
             http_get {
+              host   = "127.0.0.1"
               path   = "/ready"
               port   = "readiness"
               scheme = "HTTP"
