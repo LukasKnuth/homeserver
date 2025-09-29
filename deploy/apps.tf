@@ -223,10 +223,10 @@ module "briefly" {
   source    = "./modules/web_app"
   name      = "briefly"
   namespace = kubernetes_namespace.apps.metadata.0.name
-  image     = "ghcr.io/lukasknuth/briefly:0.1.1"
+  image     = "ghcr.io/lukasknuth/briefly:0.1.3"
   env = {
     "TZ"           = "Europe/Berlin"
-    "CRON_REFRESH" = "0 8 * * *" # daily at 8:00am
+    "CRON_REFRESH" = "30 7 * * *" # daily at 7:30am
   }
   config_map = {
     name       = kubernetes_config_map_v1.news_feeds.metadata.0.name
@@ -236,6 +236,6 @@ module "briefly" {
     "gethomepage.dev/name" = "Feed"
   }
   expose_port = 4000
-  fqdn        = "news.rpi"
+  fqdn        = "feed.rpi"
 }
 
