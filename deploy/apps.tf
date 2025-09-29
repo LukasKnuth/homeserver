@@ -139,7 +139,7 @@ module "gotify" {
   }
   dashboard_attributes = {
     "gethomepage.dev/name"          = "Gotify"
-    "gethomepage.dev/group"         = "Monitoring"
+    "gethomepage.dev/group"         = "Infra"
     "gethomepage.dev/widget.type"   = "gotify"
     "gethomepage.dev/widget.fields" = "[\"messages\"]"
     # NOTE change this if either name, namespace or expose_port change!

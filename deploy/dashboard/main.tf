@@ -11,8 +11,7 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       color = "white"
       layout = concat([
         { Apps = { style = "row", columns = 3 } },
-        { Monitoring = { columns = 1 } },
-        { Infra = { columns = 1 } }
+        { Infra = { style = "row", columns = 2 } }
         # NOTE: map iteration orders by keys first, so NOT insertion order!
         ], [for group, _entries in var.bookmarks :
         { (group) = { style = "row", columns = 3 } }
@@ -35,7 +34,7 @@ resource "kubernetes_config_map_v1" "dashboard_config" {
       ]
     )
     "services.yaml" = yamlencode([
-      { Apps = [
+      { Infra = [
         { JDownloader = {
           href = "https://my.jdownloader.org"
           ping = "192.168.107.4"
