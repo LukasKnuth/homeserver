@@ -46,6 +46,7 @@ module "dashboard" {
       ["Connections", "https://www.nytimes.com/games/connections"],
       ["Gaps", "https://gaps.wtf"],
       ["Wordle", "https://www.nytimes.com/games/wordle"],
+      ["Bracket City", "https://www.theatlantic.com/games/bracket-city/"],
       ["keybr", "https://www.keybr.com/"],
       ["monkeytype", "https://monkeytype.com/"]
     ],
@@ -205,15 +206,36 @@ resource "kubernetes_config_map_v1" "news_feeds" {
   data = {
     "feeds.yml" = yamlencode({
       feeds = [
-        { url = "https://bikepacking.com/news/readers-rig/feed/", group = "Biking" },
-        { url = "https://bytes.zone/index.xml", group = "Blogs" },
-        { url = "https://xn--gckvb8fzb.com/index.xml", group = "Blogs" },
-        { url = "https://claytonwramsey.com/blog/rss.xml", group = "Blogs" },
-        { url = "https://jmswrnr.com/feed", group = "Blogs" },
-        { url = "https://mtlynch.io/index.xml", group = "Blogs" },
-        { url = "https://www.simplermachines.com/rss/", group = "Blogs" },
-        { url = "https://shatterzone.substack.com/feed", group = "Blogs" },
-        { url = "https://gieseanw.wordpress.com/feed/", group = "Blogs" }
+        "https://bikepacking.com/news/readers-rig/feed/",
+        "https://bytes.zone/index.xml",
+        "https://xn--gckvb8fzb.com/index.xml",
+        "https://claytonwramsey.com/blog/rss.xml",
+        "https://jmswrnr.com/feed",
+        "https://mtlynch.io/index.xml",
+        "https://www.simplermachines.com/rss/",
+        "https://shatterzone.substack.com/feed",
+        "https://gieseanw.wordpress.com/feed/",
+        "https://krebsonsecurity.com/feed/",
+        "https://maggieappleton.com/rss.xml",
+        "https://organizingmythoughts.org/rss/",
+        "https://www.horrific-terrific.tech/feed",
+        "https://xeiaso.net/blog.rss",
+        "https://blog.habets.se/feed.xml",
+        "https://fasterthanli.me/index.xml",
+        "https://www.ccc.de/de/rss/updates.xml",
+        "https://lostgarden.com/feed/",
+        "https://alexkondov.com/rss.xml",
+        "https://rosenzweig.io/feed.xml",
+        "https://indiegamesplus.com/feed/",
+        "https://solar.lowtechmagazine.com/posts/index.xml",
+        "https://idiallo.com/feed.rss",
+        "https://lwn.net/headlines/rss",
+        { url = "https://lknuth.dev/writings/index.xml", group = "1. Review" },
+        { url = "https://lknuth.dev/picks/index.xml", group = "1. Review" },
+        { url = "https://www.technologyreview.com/feed", group = "3. News Tech" },
+        { url = "https://www.tagesschau.de/ausland/europa/index~rss2.xml", group = "9. News DE" },
+        { url = "https://www.tagesschau.de/investigativ/index~rss2.xml", group = "9. News DE" },
+        { url = "https://netzpolitik.org/feed/", group = "9. News DE" }
       ]
     })
   }
