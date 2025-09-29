@@ -14,9 +14,9 @@
 - op: add
   path: /machine/network/interfaces
   value:
-    # This is "enx<HW_ADDR>" where HW_ADDR is the MAC address of the interface without colons
-    # This means that it's different for _every_ Raspberry Pi Hardware device!
-    - interface: enxe45f012b8369
+    - deviceSelector:
+        # The Raspberries specific ethernet MAC address
+        hardwareAddr: "e4:5f:01:2b:83:69"
       dhcp: false
       addresses:
         # TODO can we load these from ENV config?
@@ -35,7 +35,10 @@
 - op: add
   path: /machine/kubelet/nodeIP
   value:
-    validSubnets: ["192.168.107.0/24"]
+    validSubnets:
+      # TODO is this even needed? https://github.com/siderolabs/talos/discussions/11227#discussioncomment-13699544
+      - "192.168.107.0/24"
+      - "fd00:affe:cafe:107::3/48"
 
 # Machine labels
 - op: add
